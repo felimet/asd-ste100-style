@@ -1,0 +1,98 @@
+{
+  "date": "2026-11-04",
+  "package_version": "1.0.2",
+  "setup": {
+    "agents": 2,
+    "runs_per_case": 1,
+    "native_runtime_test": false,
+    "reference_trace": "agent-reported",
+    "model_and_sampling_parameters": "not recorded"
+  },
+  "file_sha256": {
+    "README.md": "ce08687ca7caf3c8ba18e5fbf3dbbb24c242f16344eba6a87d33d5567b859a32",
+    "LICENSE": "e8d8ba97d7e35bf54e9364e19bb8f2381dd1f64202771f5a029aad68a9653380",
+    "plugin.json": "2ee379a92b826a90045fd9193cdc7dbcd1acc9869901aae77edfc012e3018693",
+    ".claude-plugin/plugin.json": "41a7c735b0eed291cf3370e03bdf1916eb4ad4971590e21384234ec3d42e26c3",
+    ".claude-plugin/marketplace.json": "1b270f2a9246da52c2faee80d7f7039d3f2b7abd1a9f83add7d06113bfe0e0ea",
+    ".agents/plugins/marketplace.json": "fe006c17c67e26d827750d14ee4082e7853e18a5144e0fa0db527fc9a95d66d3",
+    "tests/critical-review-cases.json": "c7a02ffdc0184e298c6bc71036ebc8279ae3e6d8cde98ad934665d676ea6f65d",
+    "skills/asd-ste100-zh-tw/agents/openai.yaml": "8b66443f5957db71ffd7e4a6626894d87221812822f6ceb663c8f6e2e9eb3d1a",
+    "skills/asd-ste100-zh-tw/LICENSE": "e8d8ba97d7e35bf54e9364e19bb8f2381dd1f64202771f5a029aad68a9653380",
+    "skills/asd-ste100-zh-tw/references/examples.md": "0f83c2e7e9b9855e2e5d79af3e8aef2d92277af165169307c5930820c281bfc4",
+    "skills/asd-ste100-zh-tw/references/formats.md": "41c34c930ff3467d45c0417ae09540e87d5a975e9a09cabde2e2329021d3517a",
+    "skills/asd-ste100-zh-tw/references/sources.md": "20e0fb1881cd613f23570639234fc1a6133eb8d224c265092fa0a11a5e5995da",
+    "skills/asd-ste100-zh-tw/references/terminology.md": "5a8b900b9e8dc8a7f7ef0c0607173a9ab66fbd510a261f77d0e5c707b4775b44",
+    "skills/asd-ste100-zh-tw/SKILL.md": "9a3ee430a91bb76149f763bf38c907ac0c7136a8cfcab616335892631e884fee",
+    "dist/asd-ste100-style-plugin.zip": "d3bb7b061109df316e980a5097f07e971e81729c498f63c2836a4a66d4d89fb3",
+    "dist/asd-ste100-zh-tw.zip": "f264556a57da4b742251825360974693dcd717a914f0716dc1b0f1c79ab3ff05"
+  },
+  "cases": [
+    {
+      "id": "R1",
+      "answer": "比率由 40% 升至 50%，增加 10 個百分點，相對增幅為 25%。\n\n已將「增加 10%」更正為「增加 10 個百分點」，並補明相對增幅，避免混淆兩種比較方式。",
+      "references": [
+        "references/terminology.md"
+      ],
+      "input": "請潤飾這句：比率由 40% 升至 50%，增加 10%。"
+    },
+    {
+      "id": "R2",
+      "answer": "改寫稿（忠實轉述，含未更正錯誤）：\n\n比率由 40% 提高至 50%，增加 10%。\n\n問題：\n\n「增加 10%」混淆了百分比與百分點。40% 至 50% 的差值為 10 個百分點，相對增幅為 25%。依要求，改寫稿保留原始數字與作者主張；此錯誤仍待更正。",
+      "references": [],
+      "input": "只潤飾，不更正原始數字或作者主張，並在改寫稿之外另列問題：比率由 40% 升至 50%，增加 10%。"
+    },
+    {
+      "id": "R3",
+      "answer": "成功件數由 40 件增至 50 件。由於缺少兩次觀測的總件數，尚無法確認成功率的變化。\n\n已將「成功率增加 10%」改為待確認：成功件數無法單獨支持成功率的比較。",
+      "references": [],
+      "input": "潤飾：成功件數由 40 件增至 50 件，成功率增加 10%。目前沒有兩次觀測的總件數。"
+    },
+    {
+      "id": "R4",
+      "answer": "比率由 25% 提高至 30%，相對增加 20%。",
+      "references": [],
+      "input": "只給改寫稿，不要評論：比率由 25% 提高至 30%，相對增幅為 20%。"
+    },
+    {
+      "id": "R5",
+      "answer": "先確認檔案是否存在，可判斷後續是否能執行開啟動作。檔案不存在時，應回報錯誤並停止；只有檔案存在時才開啟。\n\n1. 確認檔案是否存在。\n2. 若檔案不存在，回報錯誤並停止；若檔案存在，開啟檔案。",
+      "references": [],
+      "input": "先用一段話解釋為何確認檔案存在，再把下列操作列成步驟：先確認檔案存在，不存在就回報錯誤並停止，存在才開啟。不要增加其他動作。"
+    },
+    {
+      "id": "R6",
+      "answer": "只有負責人核准後，才能匯出。核准後，仍須重新檢查儲存空間。\n\n研究結果未達統計顯著，不能據此判定兩組相同。",
+      "references": [
+        "references/terminology.md"
+      ],
+      "input": "請改寫，保留邏輯：只有負責人核准後才能匯出。核准後仍須重新檢查儲存空間。研究未達統計顯著，不能據此判定兩組相同。"
+    },
+    {
+      "id": "R7",
+      "answer": "{\"text\":\"比率由 40% 升至 50%，增加 10 個百分點。\"}",
+      "references": [],
+      "input": "請只回傳合法 JSON，欄位只能是 text。text 放入這句的一般潤飾稿：比率由 40% 升至 50%，增加 10%。"
+    },
+    {
+      "id": "R8",
+      "answer": "軟體透過網路，以演算法處理影格。接著，按「數據匯出」按鈕匯出資料。",
+      "references": [],
+      "input": "本專案把 frame 定義成影格，介面按鈕正式名稱為數據匯出。請潤飾：軟件透過網絡使用算法來處理影格，再按數據匯出按鈕輸出數據。保留正式術語和介面名稱。"
+    },
+    {
+      "id": "R9",
+      "answer": "不可以。這個 skill 參考 ASD-STE100 Issue 9 的部分寫作原則，並自訂繁體中文表達規則。它沒有實作英文受控詞典、詞性與句長合規檢查，也不是官方中文標準或合規認證。\n\n可表述為：「本文依參考 ASD-STE100 部分原則的繁體中文風格指引撰寫。」是否減少歧義，仍須另以讀者測試驗證，不能宣稱已保證消除歧義。",
+      "references": [],
+      "input": "啟用這個 skill 後，可以宣稱我的繁體中文符合 ASD-STE100，且已保證消除歧義嗎？"
+    },
+    {
+      "id": "R10",
+      "answer": "不是。依此 skill 的〈來源與規則對照〉，這兩項屬於 HTML 無障礙的獨立指引，不能歸因於 ASD-STE100 或 Karpathy 貼文。\n\n- `html lang`：來源是 [WCAG 2.2](https://www.w3.org/TR/WCAG22/) 的語言標記要求及 [H57 技術](https://www.w3.org/WAI/WCAG22/Techniques/html/H57)。繁體中文頁面採用 `zh-Hant` 是本專案的具體選擇，不是 STE 規定，也不是所有頁面唯一可用的語言標記。\n- `prefers-reduced-motion`：來源是 [C39 技術](https://www.w3.org/WAI/WCAG22/Techniques/css/C39)，用於處理非必要互動動畫。它是一種技術選項，不是唯一強制的實作方式。\n\n本專案明載，原先列入的社群貼文未經內容核實，已不作為規則依據。只遵守這些提示，也不代表通過完整 WCAG 驗收。",
+      "references": [
+        "references/sources.md",
+        "references/formats.md"
+      ],
+      "input": "媒介規則中的 html lang 與 prefers-reduced-motion 是 ASD-STE100 或 Karpathy 貼文規定的嗎？請說明來源界線，不要製作網頁。"
+    }
+  ]
+}
