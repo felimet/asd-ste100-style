@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "asd-ste100-style",
+  "version": "1.0.1",
+  "description": "依 ASD-STE100 原則，讓 AI Agent 以清楚、精確且易於掃讀的繁體中文進行對話。",
+  "author": {
+    "name": "asd-ste100-style"
+  },
+  "keywords": ["conversation-style", "traditional-chinese", "asd-ste100", "clear-communication"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "ASD-STE100 繁體中文風格",
+        "shortDescription": "清楚、精確且易於掃讀的繁體中文對話風格",
+        "longDescription": "以日常問答、概念解釋、建議、討論與進度回報為主，先回應當前問題，再提供必要理由。保留條件與不確定性，依資訊關係使用條列、編號及連貫段落，也可延伸至文件表達。本套件為非官方中文改編，不提供正式 ASD-STE100 合規認證。",
+        "developerName": "asd-ste100-style",
+        "category": "Productivity",
+        "capabilities": []
+      }
+    }
+  }
+}

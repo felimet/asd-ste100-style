@@ -1,0 +1,20 @@
+{
+  "name": "asd-ste100-local",
+  "interface": {
+    "displayName": "ASD-STE100 繁體中文風格"
+  },
+  "plugins": [
+    {
+      "name": "asd-ste100-style",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
