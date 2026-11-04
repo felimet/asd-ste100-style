@@ -216,6 +216,12 @@ $asd-ste100-zh-tw 為以下主題撰寫解說影片腳本，分列畫面、旁�
 
 文風調整不等於事實查核、專業審查或實際測試。需要查證或修正內容時，請在任務中明確說明。
 
+## 授權
+
+本專案採用 [MIT License](LICENSE)，著作權人為 Jia-Ming Zhou（Felimet）。單一 skill 亦附有 [LICENSE](skills/asd-ste100-zh-tw/LICENSE)，下載 ZIP 內均包含授權文件。
+
+此授權適用於本專案內容，不變更外部 ASD-STE100 標準文件的著作權或授權條件。
+
 ## 文件導覽
 
 | 文件 | 內容 |

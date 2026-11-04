@@ -1,6 +1,7 @@
 {
   "name": "asd-ste100-style",
   "version": "1.0.1",
+  "license": "MIT",
   "description": "依 ASD-STE100 原則，讓 AI Agent 以清楚、精確且易於掃讀的繁體中文進行對話。",
   "author": {
     "name": "asd-ste100-style"
