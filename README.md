@@ -37,7 +37,7 @@
 ```text
 請協助我安裝 ASD-STE100 繁體中文風格套件（asd-ste100-style），其中的 skill 名稱是 asd-ste100-zh-tw。
 用途：調整 AI Agent 在日常問答、解釋、建議與進度回報中的表達風格，也可延伸至文件表達。
-來源：<貼上本專案網址、本機資料夾或 ZIP 路徑>
+來源：https://github.com/felimet/asd-ste100-style
 
 先閱讀來源的 README、套件描述檔與 SKILL.md，確認支援的安裝方式。
 開始修改檔案或設定前，主動詢問我：
