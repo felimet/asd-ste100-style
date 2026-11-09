@@ -1,0 +1,19 @@
+name: validate
+on: [push, pull_request]
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JSON parses
+        shell: pwsh
+        run: Get-ChildItem -Recurse -Filter *.json -File | Where-Object { $_.FullName -notmatch '[\/]\.git[\/]' } | ForEach-Object { Get-Content -Raw $_.FullName | ConvertFrom-Json | Out-Null; $_.Name }
+      - name: Manifest versions agree
+        shell: pwsh
+        run: |
+          $a = (Get-Content -Raw .claude-plugin/plugin.json | ConvertFrom-Json).version
+          $b = (Get-Content -Raw plugin.json | ConvertFrom-Json).version
+          if ($a -ne $b) { throw "version mismatch: $a vs $b" }
+      - name: dist zips match working tree
+        shell: pwsh
+        run: ./scripts/build-dist.ps1 -Check
