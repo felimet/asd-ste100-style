@@ -1,0 +1,14 @@
+[
+  {"id": "t01", "expect": true,  "prompt": "請用 STE 風格回答：什麼是 DNS？"},
+  {"id": "t02", "expect": true,  "prompt": "之後都用清楚精確、易於掃讀的繁體中文回覆我。先說說 TCP 和 UDP 差在哪。"},
+  {"id": "t03", "expect": true,  "prompt": "幫我改寫成 STE 風格：系統透過整合感測器來進行設備狀態資料的蒐集，並且將資料傳送到伺服器進行後續的分析。"},
+  {"id": "t04", "expect": true,  "prompt": "依 ASD-STE100 的原則潤飾這句：「本機台須經過適當的冷卻之後方可進行維護作業。」"},
+  {"id": "t05", "expect": true,  "prompt": "把這份進度回報改成條列清楚、容易掃讀的繁體中文：資料清理完了，模型訓練跑到一半，報告還沒開始寫。"},
+  {"id": "t06", "expect": true,  "prompt": "請把這段說明改成一句一個重點、語意精確的繁體中文版本：「系統會在特定情況下於必要時自動進行重試，但不保證一定成功。」"},
+  {"id": "n01", "expect": false, "prompt": "寫一個 Python 函式，輸入字串，回傳反轉後的字串。"},
+  {"id": "n02", "expect": false, "prompt": "把這句翻成英文：今天天氣很好，我們去散步吧。"},
+  {"id": "n03", "expect": false, "prompt": "幫我寫一首關於秋天的短詩。"},
+  {"id": "n04", "expect": false, "prompt": "git rebase 和 git merge 有什麼差別？"},
+  {"id": "n05", "expect": false, "prompt": "幫我寫一封給指導教授的請假信，下週三要參加研討會。"},
+  {"id": "n06", "expect": false, "prompt": "修正這個 SQL：SELECT * FORM users WHERE id = 3;"}
+]

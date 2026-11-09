@@ -1,0 +1,432 @@
+{
+  "agg": {
+    "base": {
+      "n": 9,
+      "atoms_frac": 0.96,
+      "directness": 4.67,
+      "readability": 3.22,
+      "tone": 3.56,
+      "chars": 673,
+      "list_ratio": 0.41,
+      "wins": 1
+    },
+    "old": {
+      "n": 9,
+      "atoms_frac": 0.91,
+      "directness": 4.67,
+      "readability": 4.33,
+      "tone": 4.11,
+      "chars": 451,
+      "list_ratio": 0.46,
+      "wins": 3
+    },
+    "new": {
+      "n": 9,
+      "atoms_frac": 0.94,
+      "directness": 5,
+      "readability": 4,
+      "tone": 4.11,
+      "chars": 494,
+      "list_ratio": 0.47,
+      "wins": 5
+    }
+  },
+  "rows": [
+    {
+      "id": "p1",
+      "best_arm": "old",
+      "arms": [
+        {
+          "arm": "base",
+          "atoms_met": 4,
+          "atoms_total": 4,
+          "directness": 5,
+          "readability": 3,
+          "tone": 4,
+          "chars": 380,
+          "list_ratio": 0.43,
+          "note": "結論先行且四點俱全，但篇幅偏長，三步驟清單與「單元測試是你自己寫的」等推測超出使用者所問。"
+        },
+        {
+          "arm": "old",
+          "atoms_met": 4,
+          "atoms_total": 4,
+          "directness": 5,
+          "readability": 5,
+          "tone": 4,
+          "chars": 185,
+          "list_ratio": 0.5,
+          "note": "第一句即答「還不能說完成」，四點俱全，篇幅精簡並附可直接貼用的回報句，沒有多餘內容。"
+        },
+        {
+          "arm": "new",
+          "atoms_met": 4,
+          "atoms_total": 4,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 277,
+          "list_ratio": 0.33,
+          "note": "結論先行、四點齊全並列出整合測試能補上的驗證範圍，略長於必要，仍清楚；環境限制的補充有用。"
+        }
+      ],
+      "replies": {
+        "base": "還不能說完成。目前只能說「單元測試層級通過」，整合測試沒跑，就沒有證據顯示各模組串起來、接真實依賴時行為正確。單元測試通常用 mock 或隔離環境，抓不到介面不一致、設定、資料格式與時序這類問題。\n\n建議的說法：「程式已修正，單元測試通過（請附本輪輸出）；整合測試尚未執行，端到端行為未驗證。」\n\n要宣告完成，至少還要做三件事：\n1. 實際跑整合測試，並引用本輪輸出，不要只憑記憶或推斷。\n2. 確認這次修正涉及的路徑有被整合測試覆蓋。若沒有，要補一個能重現原問題的測試，並確認它在修正前會失敗、修正後會通過。\n3. 如果整合測試因環境因素（例如缺 CUDA、缺外部服務、缺資料）暫時跑不了，就明講跑不了的原因，並把狀態標成「部分驗證」，不要寫成「完成」。\n\n另外，單元測試是你自己寫的檢查，這次修正屬於「未經獨立外部驗證」。整合測試通過後，狀態才算比較可信。",
+        "old": "還不能說「完成」。目前只能說：程式已修正，單元測試通過，整合測試尚未執行。\n\n- 已確認：單元測試通過。\n- 未驗證：模組之間的互動（整合測試）。單元測試通過，不代表整合行為正確。\n- 下一步：執行整合測試，並確認結果。\n\n若你要現在回報進度，可以這樣寫：「已修正程式，單元測試通過；整合測試待執行。」\n\n整合測試通過後，才能說「完成」。如果整合測試失敗，要先回頭修正。",
+        "new": "還不能說「完成」。目前只能說程式已修正，且單元測試通過。\n\n- 已驗證：單元測試通過，表示個別函式或模組在測試涵蓋的情況下行為正確。\n- 未驗證：整合測試尚未執行，所以模組之間的互動、與外部資源（資料庫、API、設定檔等）的串接，以及修正是否影響其他流程，都還沒有證據。\n\n單元測試只涵蓋你寫進測試的情境，不保證整合後也正確。\n\n建議先執行整合測試。通過後，可以說「修正完成，單元與整合測試皆通過」。若現在就要回報進度，可以寫「已修正並通過單元測試，整合測試待執行」。\n\n如果整合測試因環境限制無法執行，請在回報中寫明原因，並把狀態標為「未經整合驗證」。"
+      }
+    },
+    {
+      "id": "p2",
+      "best_arm": "new",
+      "arms": [
+        {
+          "arm": "old",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 4,
+          "readability": 3,
+          "tone": 4,
+          "chars": 279,
+          "list_ratio": 0.29,
+          "note": "三項要點都有，也點出 44% 的誤讀風險，但改寫選項後面的「如果你要放進報告的是第一種寫法」那段是多餘的，整體偏囉嗦。"
+        },
+        {
+          "arm": "new",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 291,
+          "list_ratio": 0.29,
+          "note": "一開頭就判定原句有誤，並給出可直接貼上的合併寫法（10 個百分點、相對增幅 25%），再補單一數字的替代句；提醒確認量測條件有實用價值。"
+        },
+        {
+          "arm": "base",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 4,
+          "readability": 4,
+          "tone": 3,
+          "chars": 297,
+          "list_ratio": 0.43,
+          "note": "三項要點齊全，也有 44% 的誤讀說明，但三個選項並列，結尾「未檢查」的顯著性免責聲明跟使用者潤飾句子的需求關係不大。"
+        }
+      ],
+      "replies": {
+        "base": "原句有歧義：40% 到 50% 是增加 10 個百分點（percentage points），相對增幅是 25%。「增加了 10%」會讓讀者誤以為良率變成 44%。\n\n建議寫法（擇一）：\n\n- 良率由 40% 提升至 50%，提高 10 個百分點。\n- 良率由 40% 提升至 50%（+10 個百分點，相對提升 25%）。\n- 良率由 40% 提升至 50%，相對提升 25%。\n\n報告若同時給起訖值，建議用第一或第二句。只寫相對增幅時，要把基準交代清楚。\n\n未檢查：我沒看到原始良率數據，這是依你給的 40% 與 50% 推算。兩個良率若來自不同批次或樣本數，是否有統計顯著差異我沒有評估。",
+        "old": "原句「增加了 10%」有問題：良率從 40% 升到 50%，是增加 10 個百分點，相對增加 25%。「10%」沒有說明基準，讀者可能誤解成相對增加 10%（也就是 44%）。\n\n建議改寫（二擇一，視報告要強調的內容）：\n\n- 良率從 40% 提升至 50%，增加 10 個百分點。\n- 良率從 40% 提升至 50%，相對增加 25%。\n\n報告若要同時呈現兩種算法，可以這樣寫：\n\n良率從 40% 提升至 50%，增加 10 個百分點（相對增加 25%）。\n\n如果你要放進報告的是第一種寫法，建議保留「40% 至 50%」這組原始數值，讓讀者可以自行核對。",
+        "new": "原句「增加了 10%」有誤：良率從 40% 升到 50%，是增加 10 個百分點，相對增幅為 25%。「10%」會被讀成相對增幅，數字與事實不符。\n\n建議寫法（可直接放進報告）：\n\n> 良率從 40% 提升至 50%，增加 10 個百分點（相對增幅 25%）。\n\n如果報告只需要一個數字，擇一即可：\n\n- 強調絕對差距：「良率從 40% 提升至 50%，增加 10 個百分點。」\n- 強調改善幅度：「良率從 40% 提升至 50%，相對提升 25%。」\n\n我只更正了百分比的基準，沒有改動良率數值。請同事確認 40% 與 50% 是否正確，以及兩者的量測條件（批次、期間）是否一致。"
+      }
+    },
+    {
+      "id": "p3",
+      "best_arm": "old",
+      "arms": [
+        {
+          "arm": "new",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 987,
+          "list_ratio": 0.53,
+          "note": "First paragraph is the bold 缺陷 heading with the flaw and impact, and the answer and alternatives are complete. It is somewhat long, with a separate 影響範圍 list and several side points on exceptions."
+        },
+        {
+          "arm": "base",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 5,
+          "readability": 3,
+          "tone": 4,
+          "chars": 1236,
+          "list_ratio": 0.32,
+          "note": "Meets all three points and adds verification tools, but the two-row table, extra scanning advice and closing offer make it the longest and most padded."
+        },
+        {
+          "arm": "old",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 5,
+          "readability": 5,
+          "tone": 4,
+          "chars": 724,
+          "list_ratio": 0.4,
+          "note": "Starts with the 缺陷 heading and states the flaw (code is fully delivered to the browser, so the key is public), then gives a clear no, what does not help, the backend proxy and short-lived token fixes, and a short exception list. It is the most compact of the three."
+        }
+      ],
+      "replies": {
+        "base": "## 缺陷\n\n先講設計缺陷：前端 JavaScript 是整份下發到使用者瀏覽器的，不存在「藏在前端」這回事。就算做了 minify、obfuscate、拆成環境變數在 build time 注入（例如 Vite 的 `VITE_*`、Next.js 的 `NEXT_PUBLIC_*`），最終 bundle 與 DevTools 的 Network 分頁都看得到明文。把 secret 放前端，等於公開。\n\n- **影響範圍**：任何人都能取得該 key，直接重放呼叫、耗盡你的額度或帳單、存取該 key 權限涵蓋的所有資料；key 一旦進了 git 歷史、CDN 快取或 source map，還要輪替才能止血。\n- **常見誤判**：「網站沒人知道」「已混淆」都不構成防護；爬蟲會掃公開網站與 GitHub 上的 key 格式。\n\n## 回答\n\n**不可以，除非那把 key 本來就設計成公開的。**\n\n判斷標準是這把 key 的類型：\n\n| 類型 | 能否放前端 | 條件 |\n|---|---|---|\n| 有權限、能計費或讀寫資料的 secret key（OpenAI、Anthropic、Stripe secret、資料庫、雲端服務憑證等） | 不可以 | 一律放後端 |\n| 設計為公開的 publishable / client key（Google Maps JS API key、Firebase web config、Stripe publishable key、Sentry DSN） | 可以 | 必須在供應商後台限制 HTTP referrer / 網域、限定可用 API、設定配額與用量警示 |\n\n**正確做法**\n\n1. 建一層你控制的後端代理（server、Cloudflare Workers、Lambda 等），key 只存在後端環境變數或 secret manager。\n2. 前端只呼叫你自己的端點；在代理上做驗證（使用者登入或 session）、rate limit、參數白名單，避免代理變成任何人都能濫用的開放轉發。\n3. 供應商支援的話，改用短效 token（例如後端簽發、數分鐘過期的 ephemeral token 或 presigned URL）給前端直連。\n4. 已經放出去的 key：視為已外洩，立即到供應商後台輪替（revoke 後重發），再檢查用量紀錄有無異常。單純刪掉程式碼或改寫 git 歷史不足以止血。\n\n**驗證方式**：部署後用瀏覽器 DevTools 搜尋 bundle 與 Network 請求，確認找不到 key 字串；另外用 `gitleaks` 或 `trufflehog` 掃 repo 與歷史。\n\n如果你告訴我是哪一家服務的哪一種 key，我可以直接判斷它屬於上表哪一類，以及該設哪些限制。\n\n未經外部驗證：以上是依通用原則的判斷，各供應商的 key 限制選項請以其當前官方文件為準。",
+        "old": "## 缺陷\n\n這個設計的缺陷在於，前端 JavaScript 會完整送到使用者的瀏覽器。任何人開啟開發者工具的 Sources 或 Network 分頁，就能讀到裡面的字串。因此，寫進前端的 API key 等於公開。\n\n## 回答\n\n不可以。如果這把 key 是能花錢、能讀寫資料或能存取私有資源的密鑰，不要放進前端。\n\n下列做法無法解決問題：\n\n- 混淆（obfuscation）或壓縮：只增加閱讀成本，不阻止擷取。\n- 建置時注入環境變數，例如 `VITE_*` 或 `NEXT_PUBLIC_*`：這些值仍會被打包進產出的 bundle。\n- 把 key 拆成多段或編碼：瀏覽器執行時仍需還原成完整的值，Network 分頁也會看到送出的請求。\n\n建議做法：\n\n1. 由後端或 serverless function 保管 key，前端只呼叫你自己的端點。\n2. 在該端點加上驗證、速率限制，並限制可呼叫的操作範圍。\n3. 若第三方服務支援，讓後端簽發短效 token 給前端，前端不接觸長效 key。\n\n例外：服務明確設計為公開的 key 可以放前端，例如 Stripe 的 publishable key、Firebase 的 web config，或有 HTTP referrer 限制的 Google Maps key。這類 key 的安全性來自服務端的限制設定，不是來自 key 本身保密。使用前請確認限制已啟用。\n\n如果已經把密鑰部署到前端，視為已外洩：到服務商的控制台撤銷並重發，再改用上述做法。\n\n未檢查你使用的是哪一家服務，也未確認該 key 的權限範圍。如果它是密鑰型 key，輪替前請先查看用量紀錄，確認是否已被濫用。",
+        "new": "**缺陷**\n\n把有權限的 API key 寫進前端 JavaScript，等於把它公開。瀏覽器必須下載這份程式碼才能執行，任何訪客都能在 DevTools 的 Sources 或 Network 分頁看到 key。壓縮、混淆、環境變數注入（例如 `VITE_*`、`NEXT_PUBLIC_*`）都只是改變打包方式，不會讓 key 在瀏覽器端變成祕密。source map 與 git 歷史也常把 key 帶出去。\n\n影響範圍包括：\n\n- 他人可以用你的額度呼叫 API，造成費用或超過配額。\n- 若 key 有寫入或讀取資料的權限，資料可能被竄改或外洩。\n- key 一旦發布，就無法收回，只能輪替。\n\n**回答**\n\n不可以，除非這把 key 本來就設計成公開使用。\n\n可以放在前端的 key，是供應商明文設計給瀏覽器使用的類型，而且你已經在供應商後台限制了它的用途。例如：\n\n- Google Maps JavaScript API key：限制 HTTP referrer 與可用的 API。\n- Stripe publishable key：只能建立 token，不能扣款或讀取資料。\n- Firebase web config：安全性由 Security Rules 控制，不靠隱藏 config。\n\n其他情況，包括 OpenAI、各類 LLM、雲端服務的 secret key，以及任何標示為 secret 或 server 的 key，都必須留在後端。做法如下：\n\n1. 前端呼叫你自己的後端端點，例如 serverless function 或 API route。\n2. 後端從環境變數或 secret manager 取得 key，再呼叫第三方 API。\n3. 後端對自己的端點加上驗證、速率限制與用量上限，否則攻擊者會改為濫用你的代理端點。\n4. 若第三方支援短效 token（例如 presigned URL、ephemeral token），由後端簽發，前端只拿到短效憑證。\n\n如果 key 已經被打包進前端並部署過，請把它視為已外洩：先到供應商後台輪替或撤銷，再修正程式碼。改寫 git 歷史不能取代輪替，因為 key 可能早已被爬取。\n\n未驗證之處：我不知道你用的是哪家服務的 key，以上「可公開」的例子需要你對照該供應商的最新文件確認。"
+      }
+    },
+    {
+      "id": "p4",
+      "best_arm": "new",
+      "arms": [
+        {
+          "arm": "base",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 5,
+          "readability": 3,
+          "tone": 3,
+          "chars": 870,
+          "list_ratio": 0.5,
+          "note": "結論先行且步驟完整，但篇幅最長、段落最多，結尾「我沒辦法從單一事件判斷」與建議找專業人員屬無資訊的免責聲明，也沒先接住情緒。"
+        },
+        {
+          "arm": "old",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 718,
+          "list_ratio": 0.61,
+          "note": "第一句就給結論並簡短承認受傷，結構清楚、有可直接說的話術，但略偏條列說教，情緒回應比 Z 淡。"
+        },
+        {
+          "arm": "new",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 5,
+          "readability": 4,
+          "tone": 5,
+          "chars": 766,
+          "list_ratio": 0.61,
+          "note": "先一句接住情緒（想離職是正常反應）再給結論，後面有自我檢查問題與可直接用的談話句，語氣自然、無多餘免責，篇幅適中。"
+        }
+      ],
+      "replies": {
+        "base": "結論：先不要在今天做離職決定。被當眾退件的衝擊很大，但「情緒最高點」做出的不可逆決定，事後後悔的機率通常比較高。先給自己 48 到 72 小時，把「想走」和「這件事該怎麼收」分開處理。\n\n**現在先做的事（今天到明天）**\n1. 先讓情緒降下來：離開座位走一走、睡一覺，今天不要寄任何情緒性的訊息或辭職信。\n2. 把事實寫下來：主管當時具體說了什麼、退回的理由是什麼、哪些是針對內容、哪些是針對你的人。這能幫你分辨「報告確實有缺漏」和「溝通方式讓你難堪」，這是兩個不同的問題。\n\n**冷靜後要釐清的三件事**\n- 報告的內容：退回的理由站得住腳嗎？如果站得住，這是可以修正的工作問題。\n- 溝通的方式：當眾退件是主管的管理失當，還是團隊一向的文化？是單次事件，還是常態？\n- 你想離開的原因：只是這件事觸發，還是你早就對這份工作有疑慮？如果過去半年本來就想走，這次只是臨門一腳，那離職可能是合理的，但應該是有計畫地走。\n\n**建議的下一步**\n- 找主管私下談，不是吵架，而是說：「我想確認這份報告需要調整的地方，也想談談在會議上被退回的方式，讓我有點難以接受。」多數主管不會意識到當眾的影響，給對方一次修正的機會。\n- 同時更新履歷、看看外面的機會。這不代表你要離職，而是讓你的決定出於選擇，而不是出於逃離。有退路，你在談話時也更有底氣。\n- 如果這是反覆發生的情況（長期被貶低、被針對），就開始留紀錄（時間、場合、內容），必要時可向 HR 或更高一層主管反映。\n\n**什麼情況下離職是合理的**\n已經有穩定的下一份工作或足夠的存款緩衝，而且你評估過後，這個環境的問題不是談一次就能改善的。這種情況下離開是理性的選擇，只是要以自己的節奏走，不是在被羞辱的當天。\n\n如果你願意多說一點（報告被退的原因、主管平常的風格、你在這間公司待多久、有沒有存款或其他出路），我可以幫你更具體地判斷該談、該忍，還是該走。\n\n我沒辦法從單一事件判斷你的職場全貌，以上是一般性建議；如果你這幾天出現睡不著、持續焦慮等狀況，也可以考慮找信任的人或專業人員聊聊。",
+        "old": "先不要今天做離職決定。被當眾退回報告，當下的情緒很強，這時做的決定常常之後會後悔。你可以先承認自己很受傷，但把「離職」和「這次被退回」分開看。\n\n**今天可以做的事**\n- 先離開現場，走一走、喝水、深呼吸。不要在情緒最高的時候寫信或傳訊息給主管。\n- 不要發離職信，也不要在群組或同事面前抱怨。這些行為很難收回。\n- 把發生的經過寫下來：誰說了什麼、報告被指出哪些問題。越具體越好，這是之後判斷的依據。\n\n**過一兩天後，再分清楚兩件事**\n1. 內容的問題：報告被退回，是因為資料、結論或格式有缺漏嗎？如果是，這是可以修正的工作問題。\n2. 方式的問題：主管選擇當眾退回，是這個人一貫的作風，還是這次特別嚴重？如果是長期的羞辱或針對你，那是另一個層次的問題。\n\n**接下來的做法**\n- 找一個私下的時間，請主管說明具體要修改的地方，以及他期待的標準。你可以說：「我想確認這份報告需要改哪些部分，這樣我可以改得更到位。」\n- 如果你覺得當眾退回的方式讓你難以接受，也可以平靜地表達：「下次如果有修改意見，我希望可以私下討論。」這是合理的要求。\n- 和一位你信任的同事或朋友聊聊，看看他們怎麼看這件事。\n\n**什麼情況下，離職才值得認真考慮**\n- 這種對待不是第一次，而且在你表達之後沒有改變。\n- 你長期在這個環境裡感到焦慮、睡不好，或影響到健康。\n- 你本來就想換工作，這件事只是讓你更確定。\n\n如果符合上述情況，建議先找好下一份工作或準備好財務緩衝，再離職，會比衝動離開穩得多。\n\n你願意多說一點嗎？例如報告被退回的原因，以及主管平常的相處方式。我可以幫你判斷這件事比較接近一次衝突，還是長期的問題，也可以幫你想怎麼跟主管談。",
+        "new": "被當眾退回報告很難受，想離職是正常的反應。但現在是情緒最高點，這時做的決定通常不是你最好的決定。先不要做任何無法回頭的動作，例如傳辭職信或在群組裡回嘴。\n\n**今天到這幾天**\n\n- 先把情緒和決策分開。離職與否，等幾天、睡過幾晚再判斷。\n- 把當時的情況寫下來：主管具體說了什麼、退回的理由是什麼、哪些是針對報告內容、哪些是針對你這個人。寫下來之後，比較容易看出批評裡有多少是可以改的內容問題。\n- 找一個信任的人談談，例如朋友、家人或其他部門的前輩。讓別人聽你說，有時就能降低衝動。\n\n**想清楚離職的理由**\n\n目前我只知道這一次的事件，不知道平常的狀況，所以無法判斷離職是否合理。可以用下面幾個問題自我檢查：\n\n- 這是單一事件，還是主管長期當眾貶低你？\n- 退回的理由有道理嗎？報告有沒有真的需要修改的地方？\n- 你想離開的是這份工作，還是只是想逃離這個當下的難堪？\n- 就算換公司，你有下一份工作的準備嗎？經濟上能撐多久？\n\n如果只是單一事件，且主管平常的表現還算合理，離職很可能是把一次衝突放大成永久的決定。如果當眾羞辱是常態，那才是你應該認真考慮離開或向人資反映的訊號。\n\n**冷靜後可以做的事**\n\n1. 找主管私下談。目的不是吵輸贏，而是問清楚：「我想確認報告哪裡需要調整，也想了解當眾討論時我可以怎麼配合。」這樣既問到修改重點，也讓主管知道當眾退回讓你不舒服。\n2. 依回饋修改報告，並先和主管確認方向，再重新提交。\n3. 如果主管反覆當眾羞辱，記錄日期與內容，再考慮向人資或更高層反映。\n4. 即使想離職，也可以先低調更新履歷、看看市場。這樣你離開時是主動選擇，而不是在情緒中被推著走。\n\n如果你願意說說報告被退回的具體原因，以及這是第一次還是常常發生，我可以幫你更具體地判斷，也可以幫你擬和主管談話的內容。"
+      }
+    },
+    {
+      "id": "p5",
+      "best_arm": "new",
+      "arms": [
+        {
+          "arm": "old",
+          "atoms_met": 4,
+          "atoms_total": 4,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 324,
+          "list_ratio": 0.25,
+          "note": "Atoms and order are correct, but the unrequested shell sample and the cross-platform command note add length."
+        },
+        {
+          "arm": "new",
+          "atoms_met": 4,
+          "atoms_total": 4,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 181,
+          "list_ratio": 0.71,
+          "note": "Gives exactly the requested steps and the stop condition, with a short permission caveat; the step 1 to 2 or 3 jump is slightly awkward."
+        },
+        {
+          "arm": "base",
+          "atoms_met": 4,
+          "atoms_total": 4,
+          "directness": 4,
+          "readability": 3,
+          "tone": 4,
+          "chars": 368,
+          "list_ratio": 0.29,
+          "note": "Atoms are met, but the extra 'get the path' step, the shell sample and the explanation of -f versus -e and exit codes are the most verbose and go beyond what was asked."
+        }
+      ],
+      "replies": {
+        "base": "操作步驟如下：\n\n1. 取得要處理的檔案路徑。\n2. 檢查該檔案是否存在。\n3. 依檢查結果分流：\n   - 檔案存在：開啟該檔案，流程結束。\n   - 檔案不存在：回報錯誤訊息（例如「找不到檔案：<路徑>」），然後停止。不要再執行後續任何步驟。\n\nShell 範例（bash）：\n\n```bash\nf=\"$1\"\nif [ -f \"$f\" ]; then\n  open \"$f\"        # Windows 用 start，Linux 用 xdg-open\nelse\n  echo \"錯誤：找不到檔案：$f\" >&2\n  exit 1\nfi\n```\n\n說明：`-f` 只判斷「一般檔案」是否存在。如果路徑可能是目錄，改用 `-e`。錯誤訊息輸出到 stderr，並以非 0 的結束碼（exit code）停止，讓呼叫端能偵測失敗。",
+        "old": "操作步驟如下：\n\n1. 檢查目標檔案是否存在。\n2. 依檢查結果分流：\n   - 檔案存在：開啟該檔案，流程結束。\n   - 檔案不存在：回報「找不到檔案」的錯誤，並附上檢查的路徑，然後停止。不要執行後續任何步驟。\n\n只有在步驟 1 確認檔案存在時，才能執行開啟動作。\n\n若要用 shell 實作，可參考下列範例（以 `$FILE` 代表目標路徑）：\n\n```sh\nif [ -e \"$FILE\" ]; then\n  open \"$FILE\"\nelse\n  echo \"錯誤：找不到檔案 $FILE\" >&2\n  exit 1\nfi\n```\n\n`open` 在 Linux 請改用 `xdg-open`，在 Windows 請改用 `start`。",
+        "new": "操作步驟如下。\n\n1. 確認目標檔案存在。\n   - 條件成立（檔案存在）：執行步驟 2。\n   - 條件不成立（檔案不存在）：執行步驟 3。\n2. 開啟該檔案。流程到此結束。\n3. 回報錯誤，說明找不到哪個檔案（附上檢查的路徑）。然後停止，不執行任何後續動作。\n\n「存在」只表示路徑有對應的檔案，不代表你有讀取權限。若開啟時因權限不足而失敗，請另外回報該錯誤。"
+      }
+    },
+    {
+      "id": "p6",
+      "best_arm": "new",
+      "arms": [
+        {
+          "arm": "new",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 332,
+          "list_ratio": 0.5,
+          "note": "First sentence gives the recommendation (A) and its flip condition. It lists three conditions that change the call and invents no figures. It ends by naming the three unknowns."
+        },
+        {
+          "arm": "base",
+          "atoms_met": 2,
+          "atoms_total": 3,
+          "directness": 4,
+          "readability": 3,
+          "tone": 3,
+          "chars": 657,
+          "list_ratio": 0.56,
+          "note": "It gives a tentative recommendation and conditions, but invents numbers (1 hour, 500 yuan, 300/800 yuan, 1 to 3 hours, under 1 hour). The headers, the long example and the closing disclaimer make it overlong."
+        },
+        {
+          "arm": "old",
+          "atoms_met": 2,
+          "atoms_total": 3,
+          "directness": 3,
+          "readability": 4,
+          "tone": 4,
+          "chars": 373,
+          "list_ratio": 0.6,
+          "note": "It covers the recommendation and the conditions. The invented threshold of about 1 hour breaks the no-fabricated-numbers rule. It opens with a number to check before the conclusion."
+        }
+      ],
+      "replies": {
+        "base": "結論：用損益平衡算，不用憑感覺。每月只整理一次的話，多半選 A，除非 B 多收的錢低於你每月手動整理的時間成本，或手動漏做的代價很高。\n\n**算法**\n\n- 每月 B 的加價 = B 月費 − A 月費\n- 每月手動成本 = 整理耗時（小時）× 你的時間價值（元/小時）\n- 加價小於手動成本，選 B；加價大於手動成本，選 A\n\n舉例：整理一次 1 小時，你的時間值 500 元。B 每月多收 300 元就划算，多收 800 元就不划算。頻率是每月一次，所以自動化省下的總時數有限，B 的門檻比每天或每週整理的情況高。\n\n**不能只看價差的三個因素**\n\n1. 漏做或做錯的代價：每月一次的手動工作最容易被忘記，間隔又長，出錯常拖到下次才發現。如果資料晚整理或整理錯會影響帳務、報稅、對外交付，B 的價值比時間成本高。\n2. 資料量會不會成長：現在 1 小時，半年後可能變 3 小時。手動成本會隨量增加，B 的加價通常是固定的。\n3. 自動整理的可靠度：B 的自動規則如果常需要你人工校正，省下的時間會打折。先試用一個月，或看它能不能匯出原始資料，避免被綁住。\n\n**我需要你補三個數字才能下判斷**\n\n- A、B 每月實際價差是多少？\n- 你手動整理一次大約花多久？\n- 如果某個月忘了整理，會有實際損失嗎？\n\n先給預設建議：如果整理只花不到 1 小時、晚做也沒後果，選 A，並在行事曆設固定提醒。如果資料量在成長，或漏做會有損失，選 B。\n\n我沒有拿到實際價格和你的作業情境，以上是通用推斷，未經實際數字驗證。",
+        "old": "先看一個數字：兩個方案的月費差，是否高於你每月手動整理所花時間的價值。\n\n你每月只整理一次，所以手動方案的額外成本只有一次的工時。我的判斷是選 A，除非下列任一條件成立。\n\n- 一次手動整理超過約 1 小時，且你的時間值得計較。\n- 手動整理常出錯，錯誤會造成損失或重工。\n- 你有時會忘記整理，導致資料中斷或延誤。\n\n估算方法：\n\n1. 取 B 的月費減去 A 的月費，得到每月多付的金額。\n2. 估計一次手動整理的時數，乘以你的時薪或你認定的時間價值。\n3. 如果第 2 項高於第 1 項，選 B；否則選 A。\n\n我不知道實際價格、整理一次要多久，也不知道 B 的自動整理是否符合你的資料格式。這三項會改變結論。請告訴我月費差和單次整理時間，我可以直接幫你算。如果 B 有試用期，先試用一個月，確認自動整理的結果可以直接使用，不必再手動修正。",
+        "new": "選 A 方案，除非你整理一次的時間成本高過兩個方案的月費差額。\n\n你每月只整理一次，手動整理的時間成本是固定且有上限的。B 方案多付的費用，買到的是每月省下這一次的整理時間。所以比較的是：\n\n- 價差：B 每月比 A 多付多少。\n- 你每月手動整理一次要花多少時間，乘以你對這段時間的估值。\n\n價差小於整理時間的價值，選 B。價差大於整理時間的價值，選 A。\n\n以下情況會改變這個判斷，也值得 B：\n\n- 手動整理常出錯，錯誤的代價高（例如影響報稅或對帳）。\n- 你常忘記整理，資料因此延誤或遺漏。\n- 資料量預期會明顯增加，手動整理的時間會跟著變長。\n\n我不知道兩個方案的實際價差、你整理一次要花多久，也不知道出錯的後果。告訴我這三項，我可以幫你算出損益平衡點。"
+      }
+    },
+    {
+      "id": "p7",
+      "best_arm": "old",
+      "arms": [
+        {
+          "arm": "base",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 5,
+          "readability": 3,
+          "tone": 3,
+          "chars": 834,
+          "list_ratio": 0.46,
+          "note": "內容最完整且正確，但過長、標題與條列偏多，又加了「未經外部驗證」的免責句，對使用者沒有資訊量。"
+        },
+        {
+          "arm": "old",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 5,
+          "readability": 5,
+          "tone": 5,
+          "chars": 450,
+          "list_ratio": 0.5,
+          "note": "第一句就說不建議，並說明未達顯著不等於相同；直接給兩種寫法，再補檢定力與等效性，長度剛好，沒有套話。"
+        },
+        {
+          "arm": "new",
+          "atoms_met": 3,
+          "atoms_total": 3,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 603,
+          "list_ratio": 0.45,
+          "note": "結論和理由都正確，也提醒避免「趨近顯著」，但結尾「我沒有檢查你的實驗設計」是無資訊的免責句，整體比 Y 稍冗。"
+        }
+      ],
+      "replies": {
+        "base": "不建議。p = 0.08 只代表「在 α = 0.05 下，資料不足以拒絕虛無假設」，不等於「兩組相同」。這是缺乏證據，不是證明沒有差異。\n\n**為什麼不能這樣寫**\n- 檢定的虛無假設是「差異為 0」，p 值是「假設差異為 0 時，看到這麼極端的資料有多罕見」。p 大不能反推差異為 0。\n- 樣本數小、變異大時，真實存在的差異也常得到 p > 0.05。這時你的檢定力（power）可能很低。\n- p = 0.08 離門檻不遠。如果效果量不小，信賴區間通常會同時涵蓋「沒差」和「差很多」，兩種結論都撐得住。\n\n**建議的寫法（擇一）**\n1. 保守描述：「兩組間未觀察到統計上顯著的差異（p = 0.08，效果量 = X，95% CI [a, b]）。」務必附效果量與信賴區間，讀者才能判斷差異有多大、不確定性有多寬。\n2. 如果你真的想主張「沒有實質差異」：要做等效性檢定（equivalence test，例如 TOST），並事先定義等效界限（equivalence margin，即多小的差異你認為沒有實際意義）。只有 90% CI 完全落在界限內，才能寫「兩組等效」。界限必須在看資料前訂好，事後訂就是循環論證。\n3. 如果是樣本不足：直接寫「本研究檢定力不足以偵測 X 大小的差異」，並附事後或事前的檢定力分析（以預期效果量算，不要用觀察到的效果量回推）。\n\n**結論段可用的句型**\n「實驗組與對照組在 [指標] 上未達統計顯著差異（p = 0.08），但 95% CI 為 [a, b]，不能排除 [某大小] 的差異；需要更大樣本或等效性檢定才能判斷兩組是否相當。」\n\n提醒：不要因為 p 接近 0.05 就改寫成「有趨勢顯著（trend toward significance）」，這也是常被審稿人挑出的寫法。\n\n我不知道你的樣本數、效果量與領域慣用的等效界限，所以上面的 X、a、b 都要用你的實際數字填。未經外部驗證，這是依統計推論原則的判斷。",
+        "old": "不建議。p = 0.08 只表示在「兩組沒有差別」的假設下，看到這麼大（或更大）差異的機率約 8%。這是「未達顯著」，不是「證明兩組相同」。沒有找到差異的證據，不等於已經證明沒有差異。\n\n結論可以改寫成以下其中一種：\n\n- 如果只想如實報告：「兩組差異未達統計顯著（p = 0.08）。」\n- 如果想補充方向：「實驗組的平均值較高（或較低）於對照組，但差異未達統計顯著（p = 0.08）。」並附上效果量與 95% 信賴區間。\n\n寫「沒有差別」之前，要先處理兩件事：\n\n1. **檢定力（power）。** 樣本數太小時，即使真的有差異也容易得到 p > 0.05。請先確認樣本數是否足以偵測你關心的最小差異。\n2. **等效性。** 如果你真的要主張「兩組相當」，要用等效性檢定（例如 TOST），事先設定可接受的差異範圍（等效界限），再檢查信賴區間是否落在界限內。普通的差異檢定做不到這件事。\n\n另外，如果信賴區間很寬、涵蓋了有實際意義的差異，結論應寫成「資料不足以判斷」，不要寫成「沒有差別」。",
+        "new": "不建議。p = 0.08 只表示在你設定的顯著水準（通常是 0.05）下，資料沒有足夠證據拒絕「兩組無差異」的虛無假設。這不能推出兩組沒有差別。\n\n原因有兩個：\n\n- **未拒絕虛無假設，不等於證明虛無假設成立。** 樣本數太小、變異太大或效果量本來就小，都可能讓 p 值偏大。p 值只描述「若兩組真的無差異，觀察到這麼極端的資料有多罕見」，不是兩組無差異的機率。\n- **這筆資料也可能與有意義的差異相容。** 只看 p 值，無法排除真實差異存在。\n\n結論可以這樣寫：\n\n- 「兩組差異未達統計顯著（p = 0.08）。」\n- 補上效果量與 95% 信賴區間，例如「平均差為 X（95% CI：L 至 U）」。讀者能由區間看出資料排除了多大的差異，這比單一 p 值更有資訊量。\n- 若檢定力不足，加一句限制：「樣本數可能不足以偵測較小的差異。」\n\n如果你真的想主張「兩組沒有實質差別」，需要另做等效性檢定（equivalence test，例如 TOST）。做法是先根據專業判斷訂出可接受的等效範圍，再檢定差異是否落在範圍內。這個範圍最好在看資料前就決定。\n\n也請避免把 0.08 寫成「趨近顯著」或「有顯著趨勢」。這種寫法同樣把未達門檻的結果解讀成有效果，只是方向相反。\n\n我沒有檢查你的實驗設計、樣本數或事前設定的 α，以上依一般慣例回答。若你的領域或期刊規定了不同的 α，結論措辭需要照其規定調整。"
+      }
+    },
+    {
+      "id": "p8",
+      "best_arm": "base",
+      "arms": [
+        {
+          "arm": "old",
+          "atoms_met": 2,
+          "atoms_total": 4,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 777,
+          "list_ratio": 0.35,
+          "note": "第一句講清楚缺鍵並給出 print(d.keys()) 檢查，但把 API 改版、CSV BOM 等來源當成現成原因列出，並直接補一段 pandas，沒有區分已知與待查證，也有臆測資料來源的傾向。"
+        },
+        {
+          "arm": "new",
+          "atoms_met": 2,
+          "atoms_total": 4,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 775,
+          "list_ratio": 0.29,
+          "note": "結論與檢查方式清楚，修正分情況且提醒 .get() 的風險；但仍以『常見三種』列出 API、JSON、CSV 等來源，沒有明講哪些已知、哪些尚待查證。"
+        },
+        {
+          "arm": "base",
+          "atoms_met": 4,
+          "atoms_total": 4,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 1046,
+          "list_ratio": 0.2,
+          "note": "結論、檢查方式齊全，並明確標示『未驗證：未看到你的程式碼或資料，以上依常見成因排序』，區分已知與待查證；仍列出 API/JSON/CSV 等候選來源，但已標明為推測。篇幅略長但結構合理。"
+        }
+      ],
+      "replies": {
+        "base": "`KeyError: 'user_id'` 代表你對一個 dict 取 `d['user_id']`，但這個 dict 裡沒有這個 key。先看 traceback 指到哪一行，然後判斷是「資料本來就可能沒有這個欄位」還是「key 名稱或資料來源有問題」。\n\n**1. 先確認實際有哪些 key**\n\n```python\nprint(d.keys())   # 或 print(d)\n```\n\n常見原因：\n- 拼字或大小寫不同，例如 `userId`、`userID`、`User_ID`、`user_id ` 後面多了空白。\n- 資料來源（API、JSON、CSV）的欄位名稱和你預期的不一樣，或某些筆資料缺這個欄位。\n- 取錯層級，例如實際是 `d['data']['user_id']`。\n- 這個 key 是在某個條件分支才被寫入，執行到這裡還沒寫。\n- 如果是 pandas：`df['user_id']` 也會丟 `KeyError`。用 `df.columns.tolist()` 檢查，CSV 的 BOM 或欄名空白（`'﻿user_id'`、`' user_id'`）很常見，可以用 `df.columns = df.columns.str.strip()` 處理。\n\n**2. 依情況修**\n\n```python\n# key 可能不存在，且有合理預設值\nuid = d.get('user_id')              # 沒有就回傳 None\nuid = d.get('user_id', default)\n\n# 缺少時應視為錯誤，但想要更清楚的訊息\nif 'user_id' not in d:\n    raise ValueError(f\"missing user_id, got keys: {list(d)}\")\nuid = d['user_id']\n```\n\n注意：不要用 `.get()` 或 `try/except KeyError: pass` 把錯誤吞掉。如果 `user_id` 是必要欄位，缺少時應該讓程式明確失敗，否則 `None` 會在後面變成更難追的錯誤。\n\n**3. 如果還是找不到原因**\n\n把 traceback 完整貼出來，再附上產生這個 dict 的那段程式碼（或它的 `print` 結果），我可以直接指出是哪一種情況。\n\n未驗證：我沒有看到你的程式碼或資料，以上是依這個錯誤最常見的成因排序，不是針對你的案例確認過的結論。",
+        "old": "`KeyError: 'user_id'` 表示程式用 `d['user_id']` 取值，但字典 `d` 裡沒有這個鍵。先找出缺鍵的原因，再決定怎麼修。\n\n**1. 確認實際內容**\n\n看 traceback 最後指向的那一行，在該行之前印出字典的鍵：\n\n```python\nprint(d.keys())   # d 換成 traceback 中被索引的變數\n```\n\n常見原因有三種：\n\n- 鍵名不同。例如實際是 `userId`、`uid` 或 `'user_id '`（含空白），大小寫也要核對。\n- 資料來源沒有這個欄位。例如 API 回傳錯誤、JSON 結構改版，或某些紀錄本來就缺欄位。\n- 索引的層級錯誤。`user_id` 可能在巢狀結構內，例如 `d['user']['id']`。\n\n**2. 依原因修正**\n\n- 鍵名不同：改成正確的鍵名。\n- 欄位可能缺漏，且缺漏是合理情況：用 `d.get('user_id')`，或指定預設值 `d.get('user_id', default)`。\n- 欄位必須存在：不要用預設值掩蓋問題。改用 `try/except KeyError`，並在錯誤訊息中記錄完整的輸入內容，才能追查資料來源。\n\n**3. 若資料來自 pandas**\n\n`df['user_id']` 也會拋出 `KeyError`。先執行 `print(df.columns.tolist())`。CSV 檔頭常有多餘空白或 BOM（位元組順序標記），此時欄名會變成 `'﻿user_id'`。讀檔時加上 `encoding='utf-8-sig'`，或用 `df.columns = df.columns.str.strip()` 清理。\n\n如果你貼上 traceback 與相關的幾行程式碼，我可以直接指出原因。",
+        "new": "`KeyError: 'user_id'` 代表程式用 `d['user_id']` 取值，但這個 dict 裡沒有 `'user_id'` 這個鍵。先確認原因，再選修正方式。\n\n**先找出原因（常見的三種）**\n\n- 資料來源沒有這個欄位。例如 API 回應、JSON 或 CSV 的欄位名稱不同，或回應是錯誤訊息而不是預期內容。\n- 鍵的拼法或大小寫不一致，例如實際是 `userId`、`User_ID`，或字串前後有空白。\n- 資料有時缺這個欄位，例如部分資料沒填，或請求失敗時回傳了另一種結構。\n\n**確認方式**\n\n在出錯的那一行之前印出實際內容：\n\n```python\nprint(type(data), data.keys() if isinstance(data, dict) else data)\n```\n\ntraceback 會指出出錯的檔案與行號，從那一行往前看 `data` 是從哪裡來的。\n\n**修正方式（依情況選一種）**\n\n- 欄位名稱錯誤：改成實際的鍵名。\n- 欄位可能缺少，而且缺少是正常情況：用 `data.get('user_id')`，或給預設值 `data.get('user_id', None)`。\n- 欄位必須存在，缺少代表資料有問題：保留 `KeyError`，或先檢查再明確報錯：\n\n```python\nif 'user_id' not in data:\n    raise ValueError(f\"missing user_id, got keys: {list(data)}\")\n```\n\n注意：`.get()` 會讓程式繼續執行，但後面如果直接使用 `None`，可能在別處才出錯。只在確定缺值可以接受時使用。\n\n如果你貼出出錯的程式碼和 traceback，我可以指出具體是哪一種原因。"
+      }
+    },
+    {
+      "id": "p9",
+      "best_arm": "new",
+      "arms": [
+        {
+          "arm": "new",
+          "atoms_met": 5,
+          "atoms_total": 5,
+          "directness": 5,
+          "readability": 4,
+          "tone": 4,
+          "chars": 237,
+          "list_ratio": 0.56,
+          "note": "First sentence gives the result and both gaps; the scope of the 12 passes is explicit and nothing overclaims, though the first sentence and the lists repeat each other a little."
+        },
+        {
+          "arm": "base",
+          "atoms_met": 5,
+          "atoms_total": 5,
+          "directness": 5,
+          "readability": 3,
+          "tone": 4,
+          "chars": 370,
+          "list_ratio": 0.5,
+          "note": "Covers every atom, but the bold headings and extra speculative risk items (unconfirmed callers, unconfirmed regression case) make it heavier than the content needs."
+        },
+        {
+          "arm": "old",
+          "atoms_met": 5,
+          "atoms_total": 5,
+          "directness": 5,
+          "readability": 5,
+          "tone": 4,
+          "chars": 231,
+          "list_ratio": 0.67,
+          "note": "Concise and well structured, but the last line says passing the full suite and lint 'would confirm' no effect outside parser, which slightly overstates what those checks prove."
+        }
+      ],
+      "replies": {
+        "base": "已修正 `parser.py` 的空字串判斷 bug，但驗證範圍有限，請先不要視為已完整驗證。\n\n**已完成**\n- 修改 `parser.py` 的空字串判斷。\n- 執行 `pytest tests/test_parser.py`，12 項全數通過。\n\n**未執行**\n- 完整測試套件：只跑了 parser 的測試檔，其他模組如果呼叫 `parser.py`，是否受影響未知。\n- lint：未檢查，格式與靜態檢查問題可能還在。\n\n**風險**\n- 空字串判斷是共用邏輯，其他呼叫端可能依賴舊行為。這是我的推測，我沒有去確認呼叫端。\n- 12 項測試是否包含這次 bug 的回歸案例，我沒有確認。如果沒有，這個修正還沒被測試直接證明。\n\n**建議下一步**\n合併前先跑完整測試套件和 lint，並確認有一個測試專門覆蓋這次的空字串情境。",
+        "old": "已修正 parser.py 的空字串判斷，並以 pytest 驗證該檔的測試。\n\n- 已完成：修改 parser.py 的空字串判斷。\n- 已驗證：執行 `pytest tests/test_parser.py`，12 項全部通過。\n- 未執行：完整測試套件。其他模組是否受這次修改影響，目前未知。\n- 未執行：lint。風格與靜態檢查尚未確認。\n\n下一步：合併前先執行完整測試套件與 lint。若兩者都通過，就能確認這次修改沒有影響 parser 以外的部分。",
+        "new": "已修正 parser.py 的空字串判斷，指定測試通過；完整測試套件與 lint 尚未執行。\n\n已驗證：\n- 命令：`pytest tests/test_parser.py`\n- 結果：12 項全部通過\n\n未驗證：\n- 完整測試套件。其他模組若呼叫 parser.py 的空字串判斷，是否受影響，目前無法確認。\n- lint。程式碼風格與靜態檢查尚未確認。\n\n需要您決定：\n- 合併前是否先跑完整測試套件與 lint。我建議先跑，因為這次只驗證了 parser 本身的測試。"
+      }
+    }
+  ]
+}
