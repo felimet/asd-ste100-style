@@ -15,7 +15,7 @@
 
 ## 生成者與評審
 
-- 生成者：agy 1.5.5（`gemini-4-argon-medium`）、Codex CLI 0.166.0（設定檔預設模型 `gpt-6.1-sol`，reasoning effort 覆寫為 medium）、Claude Code 2.1.319（`--model sonnet`，effort medium）。每臂每題取樣 1 次。
+- 生成者：agy 1.5.5（原定 `gemini-4-argon-medium`，見下方修訂）、Codex CLI 0.166.0（設定檔預設模型 `gpt-6.1-sol`，reasoning effort 覆寫為 medium）、Claude Code 2.1.319（`--model sonnet`，effort medium）。每臂每題取樣 1 次。
 - Claude 生成者完全隔離：不載入任何 `CLAUDE.md`、使用者設定、plugins、hooks、MCP 與 auto memory。agy 與 Codex 沿用先前做法，會載入作者的全域指令；這是已知限制，三臂相同。
 - 評審：每則回覆由另外兩家評審，不自評。標籤順序以題號與評審輪替，每臂在每個位置出現的次數相同。
 
@@ -34,6 +34,12 @@
 - Claude 端的 v120 − base 與 lean − base。若 v120 − base 的 atoms CI 上界 < 0，README 要寫明 skill 在 Claude 上可能減少必要內容。
 - 穩健性：排除 progress、emotional、short_qa 三類題目後重算配對差；若方向與全部題目相反，照實寫出。
 - directness、readability、tone、fabricated、字數、條列比例、整段重複率。
+
+## 修訂（2026-11-12，看到任何評分前）
+
+- agy 的 `gemini-4-argon-medium` 在開跑後立刻回報個人額度用完（RESOURCE_EXHAUSTED，約 63 小時後重置），前 6 筆 agy 生成全部失敗。擁有者決定把 agy 的生成者與評審模型改為 `gemini-3.8-flash-high`。這時只有 5 筆 Claude 生成完成，還沒有任何評審結果，也沒有人讀過回覆內容。
+- 失敗的 agy 生成與 3 個評到空回覆的評審檔已刪除；5 筆 Claude 生成保留，因為它們來自同一份凍結的臂與設定。
+- 判定規則與其他設定不變。agy 端結果不能和 2026-11-09、11-10 用 Argon 的紀錄直接比較。
 
 ## 失敗處理
 
