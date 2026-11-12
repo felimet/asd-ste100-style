@@ -1,6 +1,6 @@
 {
   "name": "asd-ste100-local",
-  "description": "ASD-STE100 繁體中文對話風格套件。",
+  "description": "參考 ASD-STE100 部分原則的非官方繁體中文對話風格套件。",
   "owner": {
     "name": "Jia-Ming Zhou (Felimet)",
     "url": "https://github.com/felimet"
@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "asd-ste100-style",
-      "source": "./"
+      "source": "./plugins/asd-ste100-style"
     }
   ]
 }

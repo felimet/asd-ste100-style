@@ -3,10 +3,12 @@
 .SYNOPSIS
   Rebuild dist/*.zip from the working tree, or verify they match it (-Check).
 .DESCRIPTION
-  Entry order is fixed, timestamps are fixed (1980-01-01), and CRLF is normalized to LF so the
-  archive does not depend on core.autocrlf. Only tracked files are bundled; content is read from
-  the working tree. -Check compares entry names (in order) and uncompressed bytes, not zip bytes,
-  because the deflate stream can differ between .NET/zlib versions.
+  Entry order is fixed, timestamps are fixed (1980-01-01), and CRLF is normalized to LF in text
+  files so the archive does not depend on core.autocrlf; other files are copied byte for byte.
+  The file lists come from `git ls-files`, so every tracked file under the plugin folder is
+  bundled and a new file must be `git add`-ed first. Content is read from the working tree.
+  -Check compares entry names (in order) and uncompressed bytes, not zip bytes, because the
+  deflate stream can differ between .NET/zlib versions.
 #>
 [CmdletBinding()]
 param([switch]$Check)
@@ -15,33 +17,44 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$skillDir = 'skills/asd-ste100-zh-tw'
+$pluginDir = 'plugins/asd-ste100-style'
+$skillDir = "$pluginDir/skills/asd-ste100-zh-tw"
 $stamp = [DateTimeOffset]::new(1980, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
 
 $tracked = @(git -C $root ls-files)
 if ($LASTEXITCODE -ne 0 -or $tracked.Count -eq 0) { throw 'git ls-files failed' }
 
-# Ordinal, case-insensitive order: agents/, LICENSE, references/, SKILL.md (matches the shipped layout).
-[string[]]$skillFiles = @($tracked | Where-Object { $_.StartsWith("$skillDir/") })
-[Array]::Sort($skillFiles, [StringComparer]::OrdinalIgnoreCase)
+function Get-TrackedUnder([string]$dir) {
+    # Ordinal, case-insensitive order, so the entry list does not depend on the platform.
+    [string[]]$files = @($tracked | Where-Object { $_.StartsWith("$dir/") })
+    if ($files.Count -eq 0) { throw "no tracked files under $dir" }
+    [Array]::Sort($files, [StringComparer]::OrdinalIgnoreCase)
+    , $files
+}
+$pluginFiles = Get-TrackedUnder $pluginDir
+$skillFiles = Get-TrackedUnder $skillDir
 
-$pluginTop = @('README.md', 'LICENSE', 'plugin.json', '.claude-plugin/plugin.json',
-    '.claude-plugin/marketplace.json', '.agents/plugins/marketplace.json')
+# The plugin ZIP mirrors the repo's marketplace layout, so the marketplace sources stay valid after unzip.
+$marketplaceTop = @('README.md', 'LICENSE', '.claude-plugin/marketplace.json', '.agents/plugins/marketplace.json')
 
 # zip path (relative to dist) -> list of @{ Entry; Source }
 $packages = [ordered]@{
     'asd-ste100-style-plugin.zip' = @(
-        $pluginTop | ForEach-Object { @{ Entry = "asd-ste100-style/$_"; Source = $_ } }
-        $skillFiles | ForEach-Object { @{ Entry = "asd-ste100-style/$_"; Source = $_ } })
+        $marketplaceTop | ForEach-Object { @{ Entry = "asd-ste100-style/$_"; Source = $_ } }
+        $pluginFiles | ForEach-Object { @{ Entry = "asd-ste100-style/$_"; Source = $_ } })
     'asd-ste100-zh-tw.zip'        = @(
         $skillFiles | ForEach-Object { @{ Entry = 'asd-ste100-zh-tw/' + $_.Substring($skillDir.Length + 1); Source = $_ } })
 }
+
+$textExtensions = @('.md', '.json', '.yaml', '.yml', '.txt')
 
 function Read-Normalized([string]$rel) {
     if ($rel -notin $tracked) { throw "not a tracked file: $rel" }
     $path = Join-Path $root $rel
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "missing in working tree: $rel" }
     $bytes = [IO.File]::ReadAllBytes($path)
+    $isText = ([IO.Path]::GetExtension($rel).ToLowerInvariant() -in $textExtensions) -or ([IO.Path]::GetFileName($rel) -ceq 'LICENSE')
+    if (-not $isText) { return , $bytes }
     $text = [Text.UTF8Encoding]::new($false).GetString($bytes).Replace("`r`n", "`n")
     , [Text.UTF8Encoding]::new($false).GetBytes($text)
 }

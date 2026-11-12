@@ -8,7 +8,7 @@
       "name": "asd-ste100-style",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "./plugins/asd-ste100-style"
       },
       "policy": {
         "installation": "AVAILABLE",

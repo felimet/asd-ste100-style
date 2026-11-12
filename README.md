@@ -1,12 +1,22 @@
 # ASD-STE100 繁體中文風格
 
-供 Claude Code、Codex 與 Google Antigravity 使用的繁體中文對話風格套件，內含 `asd-ste100-zh-tw` skill。將 ASD-STE100 的清楚表達原則用於 AI Agent 的日常問答、概念解釋、建議、討論與進度回報。
+供 Claude Code、Codex 與 Google Antigravity 使用的繁體中文對話風格套件，內含 `asd-ste100-zh-tw` skill。參考 ASD-STE100 的部分清楚表達原則，用於 AI Agent 的日常問答、概念解釋、建議、討論與進度回報。
 
 設計目標是讓每次互動更容易理解：先回應當前問題，再說明必要理由與限制。簡單問題直接回答，複雜問題保留足以支持判斷的細節，不必先提供一段文字請 Agent 改寫。
 
-這是參考部分 ASD-STE100 原則的中文表達指引，沒有實作英文受控詞典或句長合規檢查，也不保證消除歧義。改善理解與降低錯誤是設計目標，沒有讀者研究證明其效果。agy（Gemini）與 Codex 的小規模盲評比較見 `tests/`：只在 agy 端量到可讀性提高與回覆縮短，Codex 端各版本與不載入 skill 的差距都在誤差內，沒有顯示好處；樣本數少，結論僅供參考。
+這是參考部分 ASD-STE100 原則的非官方中文表達指引，沒有實作英文受控詞典或句長合規檢查，也不保證消除歧義。改善理解與降低錯誤是設計目標，沒有讀者研究證明其效果。
 
-套用時保留 STE 便於掃讀的結構：三項以上獨立的進度狀態或操作步驟用條列，有先後順序的步驟用編號，並列狀態、條件與檢查項目用項目符號；需要比較多項差異時用表格，機制與推理則用連貫段落。短答可以只有幾句，不固定加上標題或清單。
+`tests/` 有 agy（Gemini）、Codex 與 Claude Code 的小規模盲評。2026-11-12 的第二組保留題有 24 題，每個版本每題生成 1 次，比較目前的 SKILL.md（1.1.1 的文字）與不載入 skill。下列數字是必備內容滿足率（紀錄中稱 atoms）的逐題配對差，括號為 bootstrap 95% CI：
+
+- agy（Gemini 3.8 Flash）：+0.040（−0.023 至 0.101）。回覆長度約減半，其中一部分來自整段重複減少：整段答案重複一次的比例由 0.375 降到 0.125。
+- Codex：−0.027（−0.085 至 0.029），可讀性沒有提高。2026-11-10 的保留題也略低（−0.045，CI −0.105 至 0.005），不能排除小幅退步。
+- Claude Code（Sonnet）：+0.005（−0.031 至 0.045）。可讀性 +0.29（0.02 至 0.56），長度約少兩成。
+
+agy 端評審的可讀性分數隨回覆縮短而提高（1.1.1 對不載入 skill，長度比與可讀性差的逐題 Spearman 相關 −0.95），所以 agy 的可讀性提高不能當成縮短之外的另一項改善。Claude 端兩者的相關較弱（−0.28），+0.29 是否獨立於縮短仍未確定。評測時 agy 與 Codex 在作者的個人環境執行，會載入作者自己的全域指令（含與本 skill 重疊的風格規則）；Claude Code 以隔離設定執行，不載入 CLAUDE.md、使用者設定、plugins、hooks、MCP 與 auto memory。
+
+1.2.0 候選版的 SKILL.md 在 agy 端比 1.1.1 低 0.043（v120 − 1.1.1 的配對差，CI −0.090 至 −0.003），觸發事前登錄的退步規則，因此沒有採用。1.3.0 出貨的是 1.1.1 的 SKILL.md 加上已修正內容錯誤的 references；這個組合沒有另外評測。細節見 [第二組保留題紀錄](tests/heldout2-eval-2026-11-12.md)。
+
+結構依內容決定：三項以上獨立的進度狀態或操作步驟用條列，進度狀態只有一至兩項時寫進句子；有先後順序的步驟用編號，並列狀態、條件與檢查項目用項目符號；需要比較多項差異時用表格；機制與推理用連貫段落。短答可以只有幾句，不固定加標題或清單。
 
 ## 對話示例
 
@@ -24,7 +34,7 @@
 > - 待驗證：尚未在實際設備上測試，目前不能確認設備能否正常運作。
 > - 下一步：在設備上執行測試。
 
-同一風格也可延伸至文件撰寫、改寫與檢查。更多情境見 [對話與改寫範例](skills/asd-ste100-zh-tw/references/examples.md)。
+同一風格也可延伸至文件撰寫、改寫與檢查。更多情境見 [對話與改寫範例](plugins/asd-ste100-style/skills/asd-ste100-zh-tw/references/examples.md)。
 
 ## 快速開始
 
@@ -53,7 +63,7 @@
 收到選擇後：
 - Claude Code 與 Codex 優先使用本專案的套件與 marketplace；Antigravity 的專案範圍優先使用 `.agents/skills/` 單一 skill。安裝方式必須符合我選定的作用範圍。若工具無法在該範圍安裝套件，先說明限制，讓我選擇該範圍的單一 skill 或其他方案，不自行改為全域安裝。
 - 列出實際安裝位置與規則檔位置，保留既有內容，僅合併相關設定；遇到衝突時指出差異。
-- 若要設為預設風格，將精簡規則加入工具支援的 rules、CLAUDE.md、AGENTS.md、GEMINI.md 或個人化指令，並引用實際可讀的 SKILL.md 路徑。
+- 若要設為預設風格，將精簡規則加入工具支援的 rules、CLAUDE.md、AGENTS.md、GEMINI.md 或個人化指令。以套件安裝時，用 skill 名稱引用完整規則，因為套件的快取路徑會隨版本改變；只有單一 skill 放在固定位置時，才寫實際的 SKILL.md 路徑。
 - 若目標工具不能讀取本機檔案，改提供可直接貼上的自足規則；無法代為操作設定介面時，提供文字與步驟，不宣稱已套用。
 - 三項以上獨立的進度狀態或操作步驟用條列；有先後順序的步驟用編號，並列狀態、條件與檢查項目用項目符號，同時保留數值、條件、否定、時序、引用及不確定性。
 - 完成後列出變更位置、作用範圍、啟用方式，以及實際完成與尚未完成的驗證。
@@ -63,47 +73,47 @@
 
 ### 套件安裝
 
-[下載套件 ZIP](dist/asd-ste100-style-plugin.zip) 並解壓，或使用包含 `plugin.json`、`.claude-plugin/`、`.agents/plugins/` 與 `skills/` 的完整專案資料夾。
+本儲存庫的根目錄是 marketplace，套件本身在 `plugins/asd-ste100-style/`。[套件 ZIP](dist/asd-ste100-style-plugin.zip) 解壓後的 `asd-ste100-style/` 資料夾有相同結構，下文稱為「套件資料夾」。
 
-以下命令從套件根目錄執行。Claude Code 範例使用專案範圍：
-
-```powershell
-claude plugin marketplace add . --scope project
-claude plugin install asd-ste100-style@asd-ste100-local --scope project
-```
-
-不下載 ZIP 時，可直接從 GitHub 登錄 marketplace。兩個命令都保留專案範圍；這組命令尚未在乾淨環境實測：
+從 GitHub 安裝到 Claude Code 時，在目標專案的根目錄執行。專案範圍會寫進該專案的 `.claude/settings.json`，可隨專案共用。這組命令在 1.0.3 的舊佈局實際安裝過，1.3.0 的新佈局尚未實測：
 
 ```powershell
 claude plugin marketplace add felimet/asd-ste100-style --scope project
 claude plugin install asd-ste100-style@asd-ste100-local --scope project
 ```
 
-`asd-ste100-local` 只是 marketplace 識別名稱，不表示套件必須在本機。
-
-Codex CLI 可登錄本機 marketplace 並安裝套件；這會更新該機器的 Codex 套件設定：
+使用解壓的 ZIP 時，同樣在目標專案的根目錄執行，並把 `<套件資料夾>` 換成絕對路徑。本機路徑只對這台電腦有效，所以用只寫進個人設定的 `--scope local`；Claude Code 直接從該資料夾讀取套件，安裝後不要刪除它。這組命令尚未實測：
 
 ```powershell
-codex plugin marketplace add .
+claude plugin marketplace add <套件資料夾> --scope local
+claude plugin install asd-ste100-style@asd-ste100-local --scope local
+```
+
+`asd-ste100-local` 只是 marketplace 識別名稱，不表示套件必須在本機。
+
+Codex CLI 可登錄 marketplace 並安裝套件；這會更新該機器的 Codex 套件設定。這組命令尚未實測：
+
+```powershell
+codex plugin marketplace add <套件資料夾>
 codex plugin add asd-ste100-style@asd-ste100-local
 ```
 
 這組 Codex CLI 命令沒有專案 scope 選項。若只允許變更目前專案，請先確認可用的專案套件安裝方式，或選擇下方的專案單一 skill 安裝，不要直接採用跨專案設定。
 
-Antigravity CLI（`agy`）可從本機目錄安裝套件，並提供驗證命令：
+Antigravity CLI（`agy`）從套件目錄本身安裝，不經過 marketplace：
 
 ```powershell
-agy plugin validate .
-agy plugin install .
+agy plugin validate <套件資料夾>/plugins/asd-ste100-style --strict
+agy plugin install <套件資料夾>/plugins/asd-ste100-style
 ```
 
-`agy plugin validate .` 與 `--strict` 已在 agy 1.5.3 對本專案根目錄的 `plugin.json` 執行並通過（僅有兩則 note：未宣告 logo、`$schema` 的載入方式說明）；`agy plugin install` 尚未實際執行。依官方文件，CLI 外掛安裝在使用者層級的 `~/.gemini/config/plugins/`，`agy plugin install` 沒有專案 scope 選項。官方文件另載明可把外掛資料夾放進工作區的 `.agents/plugins/`，僅在該專案啟用，但此做法尚未測試，需確認。若只允許變更目前專案，改用下方的專案單一 skill 安裝。官方文件只列出 `plugin.json` 與 `.antigravity-plugin/plugin.json` 兩種 manifest 位置，也未記載 marketplace 檔案格式，因此本專案沒有為 Antigravity 另建 manifest 或 marketplace。
+`agy plugin validate --strict` 已在 agy 1.5.6 對 `plugins/asd-ste100-style` 與 ZIP 解壓後的同一目錄執行並通過（兩則 note：未宣告 logo、`$schema` 的載入方式說明）；`agy plugin install` 尚未實際執行。依官方文件，CLI 外掛安裝在使用者層級的 `~/.gemini/config/plugins/`，`agy plugin install` 沒有專案 scope 選項。官方文件另載明可把外掛資料夾放進工作區的 `.agents/plugins/`，僅在該專案啟用，但此做法尚未測試，需確認。若只允許變更目前專案，改用下方的專案單一 skill 安裝。官方文件只列出 `plugin.json` 與 `.antigravity-plugin/plugin.json` 兩種 manifest 位置，也未記載 marketplace 檔案格式，因此本專案沒有為 Antigravity 另建 manifest 或 marketplace。
 
 本專案的 Codex marketplace 名稱為 `asd-ste100-local`。在支援本機 marketplace 的 Codex 桌面介面，也可從 Plugins 目錄選取該來源並安裝。套件安裝後，預設對話風格仍由下方的 [常駐規則](#設為-ai-agent-的預設風格) 決定。
 
 ### 單一 skill 安裝（選用）
 
-將整個 `skills/asd-ste100-zh-tw` 資料夾複製到目標專案的對應位置，保留其中的參考文件。
+將整個 `plugins/asd-ste100-style/skills/asd-ste100-zh-tw` 資料夾複製到目標專案的對應位置，保留其中的參考文件。
 
 | 工具 | 專案內的安裝位置 | 呼叫方式 |
 | --- | --- | --- |
@@ -116,7 +126,7 @@ agy plugin install .
 以下 PowerShell 範例從本儲存庫根目錄執行，同時安裝到 Claude Code 與 Codex 的專案目錄；Antigravity 讀取 `.agents/skills/`，與 Codex 同一路徑，因此不需要第三個目的地。請將 `../target-project` 改為既有專案的路徑；同名目的地已存在時會停止。
 
 ```powershell
-$skillSource = (Resolve-Path './skills/asd-ste100-zh-tw').Path
+$skillSource = (Resolve-Path './plugins/asd-ste100-style/skills/asd-ste100-zh-tw').Path
 $targetProject = (Resolve-Path '../target-project').Path
 $skillTargets = @(
     (Join-Path $targetProject '.claude/skills/asd-ste100-zh-tw')
@@ -131,7 +141,7 @@ foreach ($skillTarget in $skillTargets) {
 }
 ```
 
-此 skill 以文件指令運作，不需要額外的 API 密鑰或執行期套件。安裝格式可參閱 [Claude Code 文件](https://code.claude.com/docs/en/skills)、[Codex 文件](https://learn.chatgpt.com/docs/build-skills) 與 [Antigravity Skills 文件](https://antigravity.google/docs/skills)。
+此 skill 以文件指令運作，不需要額外的 API 金鑰或執行期套件。安裝格式可參閱 [Claude Code 文件](https://code.claude.com/docs/en/skills)、[Codex 文件](https://learn.chatgpt.com/docs/build-skills) 與 [Antigravity Skills 文件](https://antigravity.google/docs/skills)。
 
 若只需跨專案使用單一 skill，Claude Code 可放在 `~/.claude/skills/asd-ste100-zh-tw/`，Codex 可放在 `~/.agents/skills/asd-ste100-zh-tw/`，Antigravity 可放在 `~/.gemini/config/skills/asd-ste100-zh-tw/`（IDE 舊版路徑 `~/.gemini/antigravity/skills/` 仍受支援）。官方文件未列出 `~/.agents/skills/`，Antigravity 是否讀取該路徑需確認；要在 Antigravity 使用，請放在上述官方路徑。這只改變可用範圍，不會自動建立常駐風格規則。
 
@@ -157,7 +167,7 @@ Codex 可在 `$` 技能選單選取本套件的 `asd-ste100-zh-tw`；直接安�
 $asd-ste100-zh-tw 請用此風格回答：為什麼把工作拆成小步驟比較容易開始？
 ```
 
-一般說明採連貫段落，三項以上的進度狀態採條列，依序執行的操作段落採編號；同一答案可以結合這些結構，不為整段對話自動切換模式。需要固定格式、讀者背景或專案術語時，直接在同一個請求中說明。若工具未列出新安裝的 skill，重新開啟工作階段後再確認；Antigravity CLI 可執行 `/skills reload` 或開新對話。
+一般說明採連貫段落，三項以上獨立的進度狀態採條列，依序執行的操作段落採編號；同一答案可以結合這些結構，不為整段對話自動切換模式。需要固定格式、讀者背景或專案術語時，直接在同一個請求中說明。若工具未列出新安裝的 skill，重新開啟工作階段後再確認；Antigravity CLI 可執行 `/skills reload` 或開新對話。
 
 ## 設為 AI Agent 的預設風格
 
@@ -171,22 +181,22 @@ $asd-ste100-zh-tw 請用此風格回答：為什麼把工作拆成小步驟比�
 | Gemini CLI（舊版） | `GEMINI.md` | `~/.gemini/GEMINI.md` |
 | 其他 Agent | 工具支援的專案 rules 或指令 | 工具支援的個人化設定、自訂指令或全域 rules |
 
-Codex 的標準檔名是 `AGENTS.md`（複數），不是 `AGENT.md`。Antigravity 的 `AGENTS.md` 或 `GEMINI.md` 不需要 frontmatter，載入後常駐；`.agents/rules/*.md` 需要有效的 `trigger` frontmatter（設為 `always_on` 才每回合注入）。Antigravity 的規則會累加而非互相覆寫，官方文件未定義 `AGENTS.md` 與 `GEMINI.md` 的優先順序；單檔上限 24 KB，全域與 `always_on` 規則共用 20,000 token 預算。`~/.gemini/GEMINI.md` 同時是 Gemini CLI 的全域檔，寫入會影響兩個工具。表列為預設位置；自訂設定目錄、override 檔與載入規則仍以目標工具為準。
+Codex 的標準檔名是 `AGENTS.md`（複數），不是 `AGENT.md`。Antigravity 的 `AGENTS.md` 或 `GEMINI.md` 不需要 frontmatter，載入後常駐；`.agents/rules/*.md` 需要有效的 `trigger` frontmatter（設為 `always_on` 才每回合注入）。Antigravity 的規則會累加而非互相覆寫，官方文件未定義 `AGENTS.md` 與 `GEMINI.md` 的優先順序；單檔上限 24 KB，全域與 `always_on` 規則共用 20,000 token 預算。`~/.gemini/GEMINI.md` 同時是 Gemini CLI 的全域檔，寫入會影響兩個工具。專案的 `AGENTS.md` 也會被 Codex 讀取；只想讓 Antigravity 常駐此風格時，改用 `.agents/rules/` 下的規則檔並設 `trigger: always_on`。表列為預設位置；自訂設定目錄、override 檔與載入規則仍以目標工具為準。
 
 上述設定方式依據 [Claude Code 指令與 rules 文件](https://code.claude.com/docs/en/memory)、[Codex AGENTS.md 文件](https://learn.chatgpt.com/docs/agent-configuration/agents-md)、[Gemini CLI GEMINI.md 文件](https://geminicli.com/docs/cli/gemini-md/) 及 [Antigravity Rules 文件](https://antigravity.google/docs/rules)。依 Google 於 2026-05-19 發布的[轉換公告](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/)，Gemini CLI 已由 Antigravity CLI 接替，個人方案自 2026-06-18 停止服務，僅部分組織授權仍可使用；本表保留 Gemini CLI 一列供舊環境參考。其他 Agent 是否原生支援此套件格式，需依其支援方式決定。
 
 ### 可複製的預設規則
 
-將下列文字合併到所選範圍的設定中。最後一行的路徑由安裝 Agent 填入實際位置；只能使用設定介面的工具，可保留自足規則並省略路徑行。
+將下列文字合併到所選範圍的設定中。最後一行由安裝 Agent 依安裝方式填寫：以套件安裝時寫 skill 名稱，因為套件的快取路徑會隨版本改變；單一 skill 放在固定位置時，可改寫成實際的 SKILL.md 路徑。只能使用設定介面的工具，可保留自足規則並省略最後一行。
 
 ```text
-對話預設採用 ASD-STE100 繁體中文風格，適用於問答、解釋、建議、討論與進度回報；依當次指定語言、語氣及格式調整。
+對話預設採用 ASD-STE100 繁體中文風格（非官方改編），適用於問答、解釋、建議、討論與進度回報；依當次指定語言、語氣及格式調整。
 使用者自己的指令（CLAUDE.md、AGENTS.md、persona 或當次要求）規定回覆順序、必備內容或語氣時，以其為準；數值、否定、條件、時序與不確定性的規則仍然適用。
 未被上述指令規定時，先回答當前問題，再補必要理由、條件與限制。簡單問題直接回答，複雜問題保留足以支持判斷的細節。
-使用清楚的主體、動作與一致術語；保留數值、條件、否定、時序、引用及不確定性，區分已知、推論與尚未驗證。
-三項以上獨立的進度狀態或操作步驟用條列，一至兩項用句子；使用者問是非判斷時，列表前先用一句寫結論。有先後順序的步驟用編號，並列狀態、條件與檢查項目用項目符號。機制與推理保留連貫段落，短答不固定加標題或清單。
-此風格可延伸至文件表達；保留指定創作文體，不把風格調整當成內容修正或外部操作的授權。
-需要完整規則時，讀取：<實際可讀的 SKILL.md 路徑>。
+使用清楚的主體、動作與一致術語；一句處理一個主要意思，依中文語意拆句，不套用英文 STE 的字數上限。保留數值、條件、否定、時序、引用及不確定性，區分已知、推論與尚未驗證；比較百分比時區分百分點與相對變化。
+三項以上獨立的進度狀態或操作步驟用條列，進度狀態只有一至兩項時用句子；使用者問是非判斷時，列表前先用一句寫結論。有先後順序的步驟用編號，並列狀態、條件與檢查項目用項目符號。機制與推理保留連貫段落，短答不固定加標題或清單。使用者限定篇幅時，只交付符合限制的答案；補充說明與免責聲明只在會改變答案時才附。
+此風格可延伸至文件表達：一般潤飾只更正可由已提供資訊唯一判定的錯誤並說明（指定純成品或固定格式時只交付正確內容）；無法唯一判定時詢問或標為待確認；保留指定創作文體；不把風格調整當成事實查核或外部操作的授權。
+需要完整規則時，載入 asd-ste100-zh-tw skill。
 ```
 
 設定後，在相同範圍開啟新工作階段，確認 Agent 讀到的規則來源，再以日常問答、接續提問及操作指引各試一題。只完成檔案安裝，不能當作預設規則已載入的證據；跨回合及跨工作階段的預設效果，仍取決於目標工具實際載入規則的方式。
@@ -198,12 +208,13 @@ Codex 的標準檔名是 `AGENTS.md`（複數），不是 `AGENT.md`。Antigravi
 | 簡短問答 | 直接回答，補上必要條件。 | 幾句即可，不固定加標題。 |
 | 概念解釋與討論 | 先說主要意思，再用理由或例子銜接。 | 一段一主題；並列資訊再用條列。 |
 | 建議與選擇 | 說明建議依據，以及會改變判斷的條件。 | 簡短段落、條列或比較表。 |
-| 進度回報 | 說明目前結果、尚未確認之處與下一步。 | 優先採狀態條列；單一簡短狀態可用句子。 |
+| 進度回報 | 說明目前結果、尚未確認之處與下一步；使用者問是否完成等是非判斷時，列表前先用一句寫結論。 | 三項以上獨立狀態用條列，一至兩項寫進句子。 |
+| 工作中的更新 | 只寫新結果或阻礙。 | 一句即可。 |
 | 逐步指引 | 先寫必要條件，再寫操作；保留同步關係。 | 只在操作段落使用編號。 |
 
 結構依交付內容決定；使用者明確指定自然或嚴格模式時，沿用其選擇。接續提問保留已確定的背景，依新資訊調整答案。
 
-文件處理是延伸用途。一般潤飾可更正由已提供資訊唯一判定的錯誤，並說明更正；指定純成品或固定格式時只交付正確內容。資訊不足的主張先釐清或標為待確認。只有明確要求忠實保留時才保存原錯誤，並清楚標示，避免將其當成可發布成品。
+文件處理是延伸用途。一般潤飾更正可由已提供資訊唯一判定的錯誤，並說明更正處；指定純成品或固定格式時只交付正確內容。資訊不足的主張先釐清或標為待確認。只有明確要求忠實保留時才保存原錯誤，並清楚標示，避免將其當成可發布成品。
 
 ## 常見用法
 
@@ -237,13 +248,13 @@ $asd-ste100-zh-tw 為以下主題撰寫解說影片腳本，分列畫面、旁�
 
 ## 規範依據
 
-本 skill 參考 [ASD-STE100 Issue 9](https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf) 的部分寫作原則。英文詞典、詞性與句長限制不直接套用於中文；中文規則、讀檔條件與編輯界線均為本專案設計，不是正式 STE 合規依據。媒介延伸與無障礙要求的來源另列於 [來源與規則對照](skills/asd-ste100-zh-tw/references/sources.md)。
+本 skill 參考 [ASD-STE100 Issue 9](https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf) 的部分寫作原則。英文詞典、詞性與句長限制不直接套用於中文；中文規則、讀檔條件與編輯界線均為本專案設計，不是正式 STE 合規依據。媒介延伸與無障礙要求的來源另列於 [來源與規則對照](plugins/asd-ste100-style/skills/asd-ste100-zh-tw/references/sources.md)。
 
-文風調整不等於事實查核、專業審查或實際測試。需要查證或修正內容時，請在任務中明確說明。
+文風調整不等於事實查核、專業審查或實際測試。一般潤飾只更正可由已提供資訊唯一判定的錯誤並說明；需要查證外部事實或修正其他內容時，請在任務中明確說明。
 
 ## 授權
 
-本專案採用 [MIT License](LICENSE)，著作權人為 Jia-Ming Zhou（Felimet）。單一 skill 亦附有 [LICENSE](skills/asd-ste100-zh-tw/LICENSE)，下載 ZIP 內均包含授權文件。
+本專案採用 [MIT License](LICENSE)，著作權人為 Jia-Ming Zhou（Felimet）。單一 skill 亦附有 [LICENSE](plugins/asd-ste100-style/skills/asd-ste100-zh-tw/LICENSE)，下載 ZIP 內均包含授權文件。
 
 此授權適用於本專案內容，不變更外部 ASD-STE100 標準文件的著作權或授權條件。
 
@@ -253,9 +264,9 @@ ASD-STE100 Simplified Technical English 是 ASD 的註冊商標。本專案為�
 
 | 文件 | 內容 |
 | --- | --- |
-| [SKILL.md](skills/asd-ste100-zh-tw/SKILL.md) | 對話風格、情境調整與回覆檢查。 |
-| [文件與操作指引](skills/asd-ste100-zh-tw/references/documents.md) | 文件改寫、審查與操作步驟的處理界線；僅在這類任務時讀取。 |
-| [對話與改寫範例](skills/asd-ste100-zh-tw/references/examples.md) | 問答、建議、接續討論、進度回報，以及文件延伸示例。 |
-| [術語與語意控制](skills/asd-ste100-zh-tw/references/terminology.md) | 情態、量詞、領域術語及量值比較。 |
-| [媒介規則](skills/asd-ste100-zh-tw/references/formats.md) | 圖解、HTML 與解說影片的表達原則。 |
-| [來源與規則對照](skills/asd-ste100-zh-tw/references/sources.md) | 來源連結與英文標準原則的中文改編對照。 |
+| [SKILL.md](plugins/asd-ste100-style/skills/asd-ste100-zh-tw/SKILL.md) | 對話風格、情境調整與回覆檢查。 |
+| [文件與操作指引](plugins/asd-ste100-style/skills/asd-ste100-zh-tw/references/documents.md) | 文件改寫、審查與操作步驟的處理界線；僅在這類任務時讀取。 |
+| [對話與改寫範例](plugins/asd-ste100-style/skills/asd-ste100-zh-tw/references/examples.md) | 問答、建議、接續討論、進度回報，以及文件延伸示例。 |
+| [術語與語意控制](plugins/asd-ste100-style/skills/asd-ste100-zh-tw/references/terminology.md) | 情態、量詞、領域術語及量值比較。 |
+| [媒介規則](plugins/asd-ste100-style/skills/asd-ste100-zh-tw/references/formats.md) | 圖解、HTML 與解說影片的表達原則。 |
+| [來源與規則對照](plugins/asd-ste100-style/skills/asd-ste100-zh-tw/references/sources.md) | 來源連結與英文標準原則的中文改編對照。 |

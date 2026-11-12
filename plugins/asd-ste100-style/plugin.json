@@ -1,0 +1,31 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "asd-ste100-style",
+  "version": "1.3.0",
+  "license": "MIT",
+  "description": "參考 ASD-STE100 部分原則的非官方繁體中文對話風格：清楚、精確且易於掃讀。",
+  "author": {
+    "name": "Jia-Ming Zhou (Felimet)",
+    "url": "https://github.com/felimet"
+  },
+  "keywords": [
+    "conversation-style",
+    "traditional-chinese",
+    "asd-ste100",
+    "clear-communication"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "ASD-STE100 繁體中文風格",
+        "shortDescription": "清楚、精確且易於掃讀的繁體中文對話風格（非官方 STE 改編）",
+        "longDescription": "以日常問答、概念解釋、建議、討論與進度回報為主，先回應當前問題，再提供必要理由。保留條件與不確定性，依資訊關係使用條列、編號及連貫段落，也可延伸至文件表達。本套件參考 ASD-STE100 部分原則，為非官方中文改編，不提供正式 ASD-STE100 合規認證。 ASD-STE100 為 ASD 的註冊商標，本套件與 ASD、STEMG 無隸屬或背書關係。",
+        "developerName": "Jia-Ming Zhou (Felimet)",
+        "category": "Productivity",
+        "capabilities": []
+      }
+    }
+  },
+  "homepage": "https://github.com/felimet/asd-ste100-style",
+  "repository": "https://github.com/felimet/asd-ste100-style"
+}
