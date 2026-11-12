@@ -1,0 +1,146 @@
+[
+ {
+  "id": "r01",
+  "expect": true,
+  "category": "named",
+  "prompt": "請依照 ASD-STE100 的寫作規則，改寫下面這段設備操作說明（維持繁體中文）：『在您開始進行清潔作業之前，建議最好可以先將電源關閉，並且等待機台冷卻一段時間之後再行處理，以免發生燙傷的情形。』"
+ },
+ {
+  "id": "r02",
+  "expect": false,
+  "category": "code",
+  "prompt": "幫我寫一個 Python 函式，輸入一個資料夾路徑，回傳裡面所有 .csv 檔加起來的總列數。"
+ },
+ {
+  "id": "r03",
+  "expect": false,
+  "category": "plain",
+  "prompt": "家裡網路一到晚上就變很慢，可能是什麼原因？"
+ },
+ {
+  "id": "r04",
+  "expect": true,
+  "category": "described",
+  "prompt": "請用技術手冊那種寫法回答我：家用 UPS 的在線式和離線式差在哪裡？每句只講一件事，讓我一眼就看得懂。"
+ },
+ {
+  "id": "r05",
+  "expect": true,
+  "category": "default",
+  "prompt": "接下來我問的所有問題，都請比照作業指引的繁體中文寫法回答：一個步驟只寫一個動作，主詞和動作都寫明，不拐彎抹角。先問一個：護照快到期了，換發要準備哪些東西？"
+ },
+ {
+  "id": "r06",
+  "expect": false,
+  "category": "other_style",
+  "prompt": "把下面這段改成輕鬆口語、有點俏皮的 IG 限動文字，可以加 emoji：『本系將於十二月五日舉辦開放參觀日，歡迎對機器人有興趣的高中生報名參加，名額有限，額滿為止。』"
+ },
+ {
+  "id": "r07",
+  "expect": true,
+  "category": "named",
+  "prompt": "請套用 Simplified Technical English 的原則，用繁體中文說明為什麼 SSD 不建議做磁碟重組。"
+ },
+ {
+  "id": "r08",
+  "expect": false,
+  "category": "translate",
+  "prompt": "請把這段話翻成日文，我要寄給日本的客戶：『謝謝您上週的熱情招待，下次您來臺灣時，請務必讓我請您吃頓飯。』"
+ },
+ {
+  "id": "r09",
+  "expect": false,
+  "category": "creative",
+  "prompt": "寫一篇 300 字左右的極短篇小說，主角是一隻在捷運站迷路的貓。"
+ },
+ {
+  "id": "r10",
+  "expect": false,
+  "category": "plain",
+  "prompt": "USB 隨身碟要格式化，exFAT 和 NTFS 該選哪一個？"
+ },
+ {
+  "id": "r11",
+  "expect": true,
+  "category": "described",
+  "prompt": "幫我把下面這段改寫得精準一點，一句一個重點，方便同事快速掃過：『這次的部署因為有一些設定上的調整，所以可能會需要大家把本地的環境變數重新檢查一遍，不然的話有機會在啟動服務的時候遇到一些奇怪的錯誤訊息。』"
+ },
+ {
+  "id": "r12",
+  "expect": true,
+  "category": "default",
+  "prompt": "從現在開始，這個對話裡你的回答都請用技術文件的寫法：短句、一句一個重點、用詞精確。第一個問題：家裡的 NAS 要用 RAID 1 還是 RAID 5？"
+ },
+ {
+  "id": "r13",
+  "expect": false,
+  "category": "other_style",
+  "prompt": "用很搞笑、像在講脫口秀的語氣，跟我解釋什麼是區塊鏈。"
+ },
+ {
+  "id": "r14",
+  "expect": true,
+  "category": "described",
+  "prompt": "請用說明書式的繁體中文回答，句子短、用詞具體、結論先講：鋰電池如果要長期存放，應該充到幾成電？"
+ },
+ {
+  "id": "r15",
+  "expect": false,
+  "category": "code",
+  "prompt": "這段 JavaScript 為什麼一直印出 undefined？`const r = arr.map(x => { x * 2 }); console.log(r);` 幫我修好。"
+ },
+ {
+  "id": "r16",
+  "expect": true,
+  "category": "named",
+  "prompt": "用 STE 的寫法、以繁體中文回答我：Docker 的 image 和 container 到底差在哪裡？"
+ },
+ {
+  "id": "r17",
+  "expect": true,
+  "category": "described",
+  "prompt": "下面這段 SOP 太冗長了，請改成簡潔、沒有歧義的繁體中文，每個步驟一句話：『首先，請先確認樣本瓶的標籤都已經貼好，接著把它們依序放進離心機裡面，記得要對稱擺放，然後再設定轉速和時間，最後按下啟動鍵就可以了。』"
+ },
+ {
+  "id": "r18",
+  "expect": false,
+  "category": "translate",
+  "prompt": "幫我把這段翻成英文，要放在論文的致謝：『感謝指導教授在研究期間的耐心指導，也感謝實驗室夥伴們一路以來的協助與陪伴。』"
+ },
+ {
+  "id": "r19",
+  "expect": false,
+  "category": "other_style",
+  "prompt": "請用文言文的口吻，跟我說明為什麼要定期備份電腦裡的資料。"
+ },
+ {
+  "id": "r20",
+  "expect": true,
+  "category": "default",
+  "prompt": "之後整段對話請都維持同一種寫法：像操作手冊一樣明確、句子精簡、不要有模糊字眼。現在的問題是：冷氣的除濕模式真的比冷房模式省電嗎？"
+ },
+ {
+  "id": "r21",
+  "expect": false,
+  "category": "creative",
+  "prompt": "寫一首關於颱風夜停電的現代詩，大約十二行。"
+ },
+ {
+  "id": "r22",
+  "expect": true,
+  "category": "named",
+  "prompt": "請把這段公告改成 STE 風格的繁體中文：『由於系統在進行更新的過程中有可能會出現短暫無法連線的狀況，因此使用者如果在這段時間內遇到問題的話，請稍後再嘗試重新登入看看。』"
+ },
+ {
+  "id": "r23",
+  "expect": false,
+  "category": "plain",
+  "prompt": "健保卡上的照片可以自己申請換新嗎？要去哪裡辦？"
+ },
+ {
+  "id": "r24",
+  "expect": true,
+  "category": "described",
+  "prompt": "解釋 TCP 三向交握的流程。請寫得像工程規格文件：用語明確、不要贅字、步驟條列，讓人掃一眼就抓到重點。"
+ }
+]

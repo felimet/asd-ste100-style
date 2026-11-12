@@ -71,6 +71,15 @@ def list_ratio(text):
     return round(sum(bool(LIST_RE.match(l)) for l in lines) / len(lines), 3) if lines else 0.0
 
 
+SENT_END_RE = re.compile(r"[。！？!?\n]+")
+HAS_TEXT_RE = re.compile(r"[0-9A-Za-z㐀-鿿]")
+
+
+def count_sentences(text):
+    """Segments split at 。！？!? and line breaks that contain text; ；，、： and ASCII '.' (3.5, example.com) do not split."""
+    return sum(bool(HAS_TEXT_RE.search(s)) for s in SENT_END_RE.split(text.strip()))
+
+
 def mech(text, spec):
     t = text.strip()
     lines = [l.strip() for l in t.splitlines() if l.strip()]
@@ -83,6 +92,8 @@ def mech(text, spec):
         checks["last_line"] = bool(lines and re.search(spec["last_line_regex"], lines[-1]))
     if "max_chars" in spec:
         checks["max_chars"] = len(t) <= spec["max_chars"]
+    if "max_sentences" in spec:
+        checks["max_sentences"] = count_sentences(t) <= spec["max_sentences"]
     if spec.get("json_only"):
         try:
             json.loads(t)
@@ -258,11 +269,14 @@ JUDGE_INDEX = {"agy": 0, "codex": 1, "claude": 2}
 AGY_JUDGE_NO_TOOLS = "\n\n不要使用任何工具，也不要執行指令或讀取檔案；只依上面提供的內容評分，直接輸出 JSON。"
 
 
-def order_for(prompt_id, rep, judge, arms):
+def order_for(prompt_id, rep, judge, arms, gen_target=None):
     """Cyclic Latin square: over consecutive prompts every arm takes every label position equally often,
     and each judge sees a different rotation of the same replies."""
     idx = int(re.sub(r"\D", "", prompt_id) or zlib.crc32(prompt_id.encode()))
-    r = (idx + rep + JUDGE_INDEX.get(judge, 0)) % len(arms)
+    k = JUDGE_INDEX.get(judge, 0)
+    if gen_target in JUDGE_INDEX and judge != gen_target:
+        k -= k > JUDGE_INDEX[gen_target]  # a generator's two cross judges get offsets 0 and 1, which differ even mod 2
+    r = (idx + rep + k) % len(arms)
     return list(arms[r:]) + list(arms[:r])
 
 
@@ -279,7 +293,7 @@ def judge_one(a):
     f = out / "judge" / f"{judge}__{gen_target}__{spec['id']}__{rep}.json"
     if f.exists():
         return
-    order = order_for(spec["id"], rep, judge, arms)
+    order = order_for(spec["id"], rep, judge, arms, gen_target)
     reps = {}
     for arm in arms:
         reps[arm] = json.loads((out / "gen" / f"{gen_target}__{arm}__{spec['id']}__{rep}.json").read_text(encoding="utf-8"))["reply"]
@@ -446,11 +460,19 @@ def selftest():
     assert all(mech("結論：2 個百分點\n風險：低", s).values())
     assert not mech("x\n風險：低", s)["first_line"]
     assert mech('{"a": 1}', {"json_only": True})["json_only"] and not mech("```json\n{}\n```", {"json_only": True})["json_only"]
+    assert count_sentences("PUT 取代整個資源，具冪等性；PATCH 只改部分。") == 1
+    assert count_sentences("版本 3.5 見 example.com。第二句！\n- 第三項\n\n……") == 3
+    assert mech("一句。兩句。", {"max_sentences": 1}) == {"max_sentences": False}
     arms = ["base", "lean", "new"]
     for j in ("codex", "claude"):  # every arm takes every position equally often over 24 prompts
         pos = [[order_for(f"g{i:02d}", 0, j, arms).index(a) for i in range(1, 25)] for a in arms]
         assert all(p.count(k) == 8 for p in pos for k in range(3)), pos
     assert order_for("g01", 0, "codex", arms) != order_for("g01", 0, "claude", arms)
+    two, cross = ["ship", "len"], {"agy": ("codex", "claude"), "codex": ("agy", "claude"), "claude": ("agy", "codex")}
+    for t, (j1, j2) in cross.items():  # two arms: a generator's judges always see opposite orders
+        for i in range(1, 19):
+            o = [order_for(f"h{i:02d}", r, j, two, t) for r in range(3) for j in (j1, j2)]
+            assert all(o[k] != o[k + 1] for k in (0, 2, 4)) and sum(x[0] == "len" for x in o) == 3, (t, i, o)
     once = "暫存用來暫時保留工作中的內容，備份用來在原始資料遺失或損毀時還原資料。" * 3
     assert is_dup(once + "\n\n" + once) and not is_dup(once) and not is_dup("短答")
     assert skill_reads([r"Get-Content C:\w\.agents\skills\asd-ste100-zh-tw\SKILL.md"])["skill_md"]
@@ -475,6 +497,7 @@ def main():
     ap.add_argument("--only", default="", help="comma-separated prompt ids")
     ap.add_argument("--skip", default="", help="report only: comma-separated target:prompt_id pairs to drop (e.g. failed generations)")
     ap.add_argument("--prompts", type=Path, default=HERE / "prompts.json")
+    ap.add_argument("--triggers", type=Path, default=HERE / "triggers.json")
     a = ap.parse_args()
     if a.stage == "selftest":
         return selftest()
@@ -512,7 +535,7 @@ def main():
             list(ex.map(gen_one, jobs))
     elif a.stage == "trigger":
         (a.out / "trig").mkdir(exist_ok=True)
-        tspecs = json.loads((HERE / "triggers.json").read_text(encoding="utf-8"))
+        tspecs = json.loads(a.triggers.read_text(encoding="utf-8"))
         jobs = [(t, arm, s, a.work, a.out) for s in tspecs for arm in arms for t in targets if arm != "base"]
         with ThreadPoolExecutor(a.jobs) as ex:
             list(ex.map(trig_one, jobs))

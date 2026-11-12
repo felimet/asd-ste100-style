@@ -24,3 +24,9 @@ jobs:
       - name: dist zips match working tree
         shell: pwsh
         run: ./scripts/build-dist.ps1 -Check
+      - name: Eval scripts pass their selftests and reproduce the recorded decisions
+        run: |
+          python3 -I -B tests/eval/run_cli_eval.py selftest
+          python3 -I -B tests/eval/heldout2_decide.py selftest
+          python3 -I -B tests/eval/heldout3_decide.py selftest
+          python3 -I -B -X utf8 tests/eval/heldout2_decide.py tests/heldout2-eval-2026-11-12.json | grep -q '"decision": "revert SKILL.md to 1.1.1"'
