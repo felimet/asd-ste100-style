@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
-"""Cross-CLI A/B eval for the asd-ste100-zh-tw skill (agy Gemini 4 Argon + Codex).
+"""Cross-CLI A/B eval for the asd-ste100-zh-tw skill (agy Gemini 4 Argon, Codex, Claude Code).
 
 Stages: setup -> gen -> judge -> report. Stdlib only. Every stage is resumable:
 a result file that already exists is skipped. `selftest` checks the mechanical metrics.
 Raw per-call files live in --out; only the consolidated report is meant for the repo.
+--work and --out must be outside the repo: agy and Codex load the repo's AGENTS.md into every arm otherwise.
 """
-import argparse, itertools, json, os, random, re, shutil, subprocess, sys, zlib
+import argparse, difflib, hashlib, itertools, json, os, random, re, shutil, subprocess, sys, zlib
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).parent
+REPO = HERE.parents[1]
 SKILL = "asd-ste100-zh-tw"
-AGY_MODEL = "gemini-4-argon-medium"
+SKILL_MD_RE = re.compile(r"asd-ste100-zh-tw[\\/]+SKILL\.md")
+REF_RE = re.compile(r"asd-ste100-zh-tw[\\/]+references[\\/]+(\w+)\.md")
+AGY_MODEL = os.environ.get("AGY_EVAL_MODEL", "gemini-4-argon-medium")  # `agy models` lists the ids
 # memories and hooks off: the user's own Codex memories mention this project and would leak into every arm
 # On Windows, subprocess("codex") can resolve to the desktop app's bundled older exe, which rejects the user's
 # config.toml. Set CODEX_BIN to the native exe of the codex you actually use (e.g. the npm global one).
@@ -19,7 +23,14 @@ CODEX_BASE = [os.environ.get("CODEX_BIN", "codex"), "exec", "--skip-git-repo-che
               "-c", 'model_reasoning_effort="medium"', "-c", "features.memories=false",
               "-c", "memories.use_memories=false", "-c", "memories.generate_memories=false",
               "-c", "features.hooks=false"]
-PREFIX = {"agy": f"/{SKILL} ", "codex": f"${SKILL} "}
+# Claude Code: user settings (plugins, hooks), MCP, every CLAUDE.md and auto memory stay out of all arms;
+# project skills (.claude/skills/) still load. The prompt goes through stdin: a leading "/skill" argv is rewritten
+# into a Windows path by Git Bash (MSYS), and long judge prompts can exceed the 32K Windows command line.
+CLAUDE_MODEL = os.environ.get("CLAUDE_EVAL_MODEL", "sonnet")
+CLAUDE_BASE = [os.environ.get("CLAUDE_BIN", "claude"), "-p", "--setting-sources", "project,local", "--strict-mcp-config",
+               "--no-session-persistence", "--effort", "medium"]
+CLAUDE_ENV = {"CLAUDE_CODE_DISABLE_CLAUDE_MDS": "1", "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"}
+PREFIX = {"agy": f"/{SKILL} ", "codex": f"${SKILL} ", "claude": f"/{SKILL} "}
 
 JUDGE_SCHEMA = {
     "type": "object", "additionalProperties": False, "required": ["replies", "best"],
@@ -44,8 +55,10 @@ def dec(b: bytes) -> str:
     return b.decode("utf-8", "replace")
 
 
-def run(cmd, cwd, timeout=300):
-    p = subprocess.run(cmd, cwd=cwd, stdin=subprocess.DEVNULL, capture_output=True, timeout=timeout)
+def run(cmd, cwd, timeout=300, env=None, stdin_text=None):
+    io = {"input": stdin_text.encode("utf-8")} if stdin_text is not None else {"stdin": subprocess.DEVNULL}
+    p = subprocess.run(cmd, cwd=cwd, capture_output=True, timeout=timeout,
+                       env={**os.environ, **env} if env else None, **io)
     return dec(p.stdout), dec(p.stderr), p.returncode
 
 
@@ -79,6 +92,28 @@ def mech(text, spec):
     return checks
 
 
+def is_dup(text):
+    """True when the whole answer appears twice (seen in agy output). Flag only: judges see the raw reply."""
+    t = re.sub(r"\s+", "", text)
+    n = len(t)
+    if n < 200:
+        return False
+    half = difflib.SequenceMatcher(None, t[: n // 2], t[n // 2:], autojunk=False).ratio()
+    k = n // 3
+    return half >= 0.85 or t.find(t[:k], k) != -1
+
+
+def skill_reads(tools):
+    """Which files of this skill the tool log shows were read; other skills' SKILL.md files do not count."""
+    return {"skill_md": any(SKILL_MD_RE.search(t) for t in tools),
+            "refs": sorted({m.group(1) for t in tools for m in REF_RE.finditer(t)})}
+
+
+def outside_repo(p):
+    if p.resolve().is_relative_to(REPO.resolve()):
+        sys.exit(f"{p} is inside the repo; agy and Codex would load the repo's AGENTS.md into every arm")
+
+
 # ---------- generation ----------
 def gen_agy(prompt, cwd):
     out, err, rc = run(["agy", "-p", prompt, "--model", AGY_MODEL, "--output-format", "stream-json",
@@ -99,7 +134,7 @@ def gen_agy(prompt, cwd):
 
 def gen_codex(prompt, cwd, outfile):
     outfile.unlink(missing_ok=True)  # never read a previous call's output when this call fails
-    out, err, rc = run(CODEX_BASE + ["--json", "-o", str(outfile), prompt], cwd, 240)
+    out, err, rc = run(CODEX_BASE + ["--json", "-o", str(outfile), prompt], cwd, int(os.environ.get("CODEX_TIMEOUT", "240")))
     reply = outfile.read_text(encoding="utf-8") if outfile.exists() else ""
     tools = []
     for l in out.splitlines():
@@ -113,6 +148,43 @@ def gen_codex(prompt, cwd, outfile):
     return reply, tools, rc
 
 
+def gen_claude(prompt, cwd):
+    out, err, rc = run(CLAUDE_BASE + ["--model", CLAUDE_MODEL, "--output-format", "stream-json", "--verbose"],
+                       cwd, 300, CLAUDE_ENV, prompt)
+    reply, tools, ctx = "", [], None
+    for l in out.splitlines():
+        try:
+            e = json.loads(l)
+        except ValueError:
+            continue
+        if e.get("type") == "result":
+            reply = e.get("result") or ""
+            # a /skill prefix is expanded into the prompt, so it shows up here, not as a tool call;
+            # this usage is cumulative over every model request in the call, not the context size of one request
+            u = e.get("usage") or {}
+            ctx = sum(u.get(k) or 0 for k in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"))
+        elif e.get("type") == "assistant":
+            for c in (e.get("message") or {}).get("content", []):
+                if c.get("type") == "tool_use":
+                    tools.append(json.dumps({"name": c.get("name"), "input": c.get("input")}, ensure_ascii=False))
+    return reply, tools, rc, ctx
+
+
+def generate(target, prompt, cwd, lastfile):
+    """Returns (reply, tools, rc, ctx_tokens); ctx_tokens is None for CLIs that do not report usage here."""
+    if target == "agy":
+        return (*gen_agy(prompt, cwd), None)
+    if target == "codex":
+        return (*gen_codex(prompt, cwd, lastfile), None)
+    if target == "claude":
+        return gen_claude(prompt, cwd)
+    raise ValueError(f"unknown target {target}")
+
+
+def claude_skill_call(tools):
+    return any(json.loads(t).get("name") == "Skill" and SKILL in t for t in tools) or skill_reads(tools)["skill_md"]
+
+
 def gen_one(a):
     target, arm, spec, rep, work, out = a
     f = out / "gen" / f"{target}__{arm}__{spec['id']}__{rep}.json"
@@ -122,16 +194,19 @@ def gen_one(a):
     cwd = work / arm
     for attempt in range(2):
         try:
-            reply, tools, rc = (gen_agy(prompt, cwd) if target == "agy"
-                                else gen_codex(prompt, cwd, f.with_suffix(".last.txt")))
+            reply, tools, rc, ctx = generate(target, prompt, cwd, f.with_suffix(".last.txt"))
         except subprocess.TimeoutExpired:
-            reply, tools, rc = "", [], -1
+            reply, tools, rc, ctx = "", [], -1, None
         if reply.strip():
             break
-    loaded = any("SKILL.md" in t or SKILL in t for t in tools)
+    reads = skill_reads(tools)
+    if target == "claude":  # the CLI expands the /skill prefix itself (headless docs); ctx_tokens lets a report audit it
+        loaded = arm != "base" or claude_skill_call(tools)
+    else:  # agy's /skill call can apply the skill without a logged file read, so False here may undercount
+        loaded = reads["skill_md"]
     rec = dict(target=target, arm=arm, id=spec["id"], rep=rep, reply=reply, rc=rc, tools=tools,
-               skill_read=loaded, chars=len(reply.strip()), list_ratio=list_ratio(reply),
-               mech=mech(reply, spec))
+               skill_read=loaded, refs_read=reads["refs"], ctx_tokens=ctx, dup=is_dup(reply),
+               chars=len(reply.strip()), list_ratio=list_ratio(reply), mech=mech(reply, spec))
     f.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
     print("gen", f.name, rec["chars"], flush=True)
 
@@ -142,11 +217,10 @@ def trig_one(a):
     if f.exists():
         return
     try:  # no skill prefix: does the CLI load the skill on its own from the description?
-        reply, tools, rc = (gen_agy(spec["prompt"], work / arm) if target == "agy"
-                            else gen_codex(spec["prompt"], work / arm, f.with_suffix(".last.txt")))
+        reply, tools, rc, _ = generate(target, spec["prompt"], work / arm, f.with_suffix(".last.txt"))
     except subprocess.TimeoutExpired:
         reply, tools, rc = "", [], -1
-    loaded = any("SKILL.md" in t for t in tools)
+    loaded = claude_skill_call(tools) if target == "claude" else skill_reads(tools)["skill_md"]
     f.write_text(json.dumps(dict(target=target, arm=arm, id=spec["id"], expect=spec["expect"], loaded=loaded,
                                  rc=rc, tools=tools, chars=len(reply.strip())), ensure_ascii=False, indent=1), encoding="utf-8")
     print("trig", f.name, loaded, flush=True)
@@ -180,14 +254,24 @@ def judge_prompt(spec, labeled):
             f"只輸出符合 JSON schema 的 JSON，replies 必須依序包含 {'、'.join(l for l, _ in labeled)} 共 {n} 個 label。")
 
 
-def order_for(key, arms):
-    perms = list(itertools.permutations(arms))
-    return list(perms[zlib.crc32(key.encode()) % len(perms)])
+JUDGE_INDEX = {"agy": 0, "codex": 1, "claude": 2}
+AGY_JUDGE_NO_TOOLS = "\n\n不要使用任何工具，也不要執行指令或讀取檔案；只依上面提供的內容評分，直接輸出 JSON。"
+
+
+def order_for(prompt_id, rep, judge, arms):
+    """Cyclic Latin square: over consecutive prompts every arm takes every label position equally often,
+    and each judge sees a different rotation of the same replies."""
+    idx = int(re.sub(r"\D", "", prompt_id) or zlib.crc32(prompt_id.encode()))
+    r = (idx + rep + JUDGE_INDEX.get(judge, 0)) % len(arms)
+    return list(arms[r:]) + list(arms[:r])
 
 
 def extract_json(s):
-    m = re.search(r"\{.*\}", s, re.S)
-    return json.loads(m.group(0))
+    # first complete object only: agy sometimes prints the same JSON twice, which a greedy {.*} turns into invalid JSON
+    i = s.find("{")
+    if i < 0:
+        raise ValueError("no JSON object in judge output")
+    return json.JSONDecoder().raw_decode(s[i:])[0]
 
 
 def judge_one(a):
@@ -195,7 +279,7 @@ def judge_one(a):
     f = out / "judge" / f"{judge}__{gen_target}__{spec['id']}__{rep}.json"
     if f.exists():
         return
-    order = order_for(f"{gen_target}{spec['id']}{rep}", arms)
+    order = order_for(spec["id"], rep, judge, arms)
     reps = {}
     for arm in arms:
         reps[arm] = json.loads((out / "gen" / f"{gen_target}__{arm}__{spec['id']}__{rep}.json").read_text(encoding="utf-8"))["reply"]
@@ -208,9 +292,19 @@ def judge_one(a):
     for attempt in range(2):
         try:
             if judge == "agy":
-                o, e, rc = run(["agy", "-p", prompt, "--model", AGY_MODEL, "--output-format", "json",
-                                "--json-schema", str(schema), "--print-timeout", "240s"], cwd, 300)
+                # Gemini judges sometimes call a shell tool, which headless agy denies, and then return nothing.
+                # The Claude judge runs with no tools and the Codex judge in an empty read-only dir; this line
+                # puts agy on the same footing without changing the rubric.
+                t = int(os.environ.get("AGY_JUDGE_TIMEOUT", "240"))
+                o, e, rc = run(["agy", "-p", prompt + AGY_JUDGE_NO_TOOLS, "--model", AGY_MODEL, "--output-format", "json",
+                                "--json-schema", str(schema), "--print-timeout", f"{t}s"], cwd, t + 60)
                 txt = json.loads(o)["response"]
+            elif judge == "claude":
+                o, e, rc = run(CLAUDE_BASE + ["--model", CLAUDE_MODEL, "--tools", "", "--output-format", "json",
+                                              "--json-schema", json.dumps(JUDGE_SCHEMA)], cwd, 300, CLAUDE_ENV, prompt)
+                assert rc == 0, f"claude judge rc={rc}"
+                r = json.loads(o)
+                txt = json.dumps(r["structured_output"]) if r.get("structured_output") else r.get("result", "")
             else:
                 lf = f.with_suffix(".last.txt")
                 lf.unlink(missing_ok=True)  # a stale file from an earlier pass was read when codex failed (usage limit)
@@ -235,12 +329,18 @@ def mean(xs):
     return round(sum(xs) / len(xs), 3) if xs else float("nan")
 
 
-def boot_ci(diffs, n=4000, seed=7):
+def boot_ci_raw(diffs, n=4000, seed=7):
+    # percentile bootstrap; the indices are the ones every recorded CI used, so keep them for comparability
     if len(diffs) < 2:
         return (float("nan"), float("nan"))
     rnd = random.Random(seed)
     ms = sorted(sum(rnd.choice(diffs) for _ in diffs) / len(diffs) for _ in range(n))
-    return (round(ms[int(0.025 * n)], 3), round(ms[int(0.975 * n)], 3))
+    return (ms[int(0.025 * n)], ms[int(0.975 * n)])
+
+
+def boot_ci(diffs, n=4000, seed=7):
+    lo, hi = boot_ci_raw(diffs, n, seed)
+    return (round(lo, 3), round(hi, 3))
 
 
 def report(out, specs, arms, targets, judges, reps, skip=frozenset()):
@@ -274,16 +374,18 @@ def report(out, specs, arms, targets, judges, reps, skip=frozenset()):
         return dict(n=len(g), atoms=mean(s["atoms"] for s in sc), d=mean(s["d"] for s in sc), r=mean(s["r"] for s in sc),
                     t=mean(s["t"] for s in sc), fab=mean(s["fab"] for s in sc), best=mean(s["best"] for s in sc),
                     mech=mean(mf), mech_all=mean(mp), chars=mean(v["chars"] for v in g),
-                    lr=mean(v["list_ratio"] for v in g), skill=mean(v["skill_read"] for v in g))
+                    lr=mean(v["list_ratio"] for v in g), skill=mean(v["skill_read"] for v in g),
+                    ctx=mean(v["ctx_tokens"] for v in g if v.get("ctx_tokens")),
+                    dup=mean(v.get("dup", is_dup(v["reply"])) for v in g))
 
-    hdr = "| target | arm | n | atoms | direct | read | tone | fab | best | mech | mech全過 | 字數 | 條列比 | 讀 SKILL |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"
+    hdr = "| target | arm | n | atoms | direct | read | tone | fab | best | mech | mech全過 | 字數 | 條列比 | 讀 SKILL | 輸入 tokens 累計 | 整段重複 |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"
     for title, flt in (("兩位評審平均", None), ("僅交叉評審（評審不是生成者）", lambda j, t: j != t),
                        ("僅自評（評審就是生成者）", lambda j, t: j == t)):
         L += [f"### {title}", "", hdr]
         for t in targets:
             for a in arms:
                 c = cell(t, a, flt)
-                L.append(f"| {t} | {a} | {c['n']} | {c['atoms']} | {c['d']} | {c['r']} | {c['t']} | {c['fab']} | {c['best']} | {c['mech']} | {c['mech_all']} | {c['chars']} | {c['lr']} | {c['skill']} |")
+                L.append(f"| {t} | {a} | {c['n']} | {c['atoms']} | {c['d']} | {c['r']} | {c['t']} | {c['fab']} | {c['best']} | {c['mech']} | {c['mech_all']} | {c['chars']} | {c['lr']} | {c['skill']} | {c['ctx']} | {c['dup']} |")
         L.append("")
     # paired differences on prompt level
     L += ["### 配對差（逐題，兩位評審平均；括號為 bootstrap 95% CI，只有 n 題可重抽，僅供量級參考）", "",
@@ -319,7 +421,7 @@ def report(out, specs, arms, targets, judges, reps, skip=frozenset()):
             L.append(f"| {t} | {a} − {b} | " + " | ".join(row) + " |")
     L.append("")
     # per prompt atoms table
-    L += ["### 逐題 atoms 滿足率（兩位評審、兩個生成模型平均）", "", "| 題 | kind | " + " | ".join(arms) + " |", "|---|---|" + "---|" * len(arms)]
+    L += ["### 逐題 atoms 滿足率（所有生成者與評審的分數平均）","", "| 題 | kind | " + " | ".join(arms) + " |", "|---|---|" + "---|" * len(arms)]
     for s in specs:
         cols = []
         for a in arms:
@@ -344,7 +446,19 @@ def selftest():
     assert all(mech("結論：2 個百分點\n風險：低", s).values())
     assert not mech("x\n風險：低", s)["first_line"]
     assert mech('{"a": 1}', {"json_only": True})["json_only"] and not mech("```json\n{}\n```", {"json_only": True})["json_only"]
-    assert len(set(tuple(order_for(f"k{i}", ["a", "b", "c"])) for i in range(40))) > 3
+    arms = ["base", "lean", "new"]
+    for j in ("codex", "claude"):  # every arm takes every position equally often over 24 prompts
+        pos = [[order_for(f"g{i:02d}", 0, j, arms).index(a) for i in range(1, 25)] for a in arms]
+        assert all(p.count(k) == 8 for p in pos for k in range(3)), pos
+    assert order_for("g01", 0, "codex", arms) != order_for("g01", 0, "claude", arms)
+    once = "暫存用來暫時保留工作中的內容，備份用來在原始資料遺失或損毀時還原資料。" * 3
+    assert is_dup(once + "\n\n" + once) and not is_dup(once) and not is_dup("短答")
+    assert skill_reads([r"Get-Content C:\w\.agents\skills\asd-ste100-zh-tw\SKILL.md"])["skill_md"]
+    assert not skill_reads(['cat ~/.agents/skills/other-skill/SKILL.md'])["skill_md"]
+    assert skill_reads(['{"file_path": ".claude/skills/asd-ste100-zh-tw/references/documents.md"}'])["refs"] == ["documents"]
+    assert extract_json('x {"a": 1}\n{"a": 1}') == {"a": 1} and extract_json('{"a": {"b": 2}}') == {"a": {"b": 2}}
+    # mean of 4 draws from {0,0,0,1}: count of 1s ~ Binomial(4, 1/4), CDF 0.316/0.738/0.949/0.996 -> 2.5% is 0, 97.5% is 3/4
+    assert boot_ci([1 / 3] * 3) == (0.333, 0.333) and boot_ci_raw([0.0, 0.0, 0.0, 1.0]) == (0.0, 0.75)
     print("selftest ok")
 
 
@@ -370,14 +484,24 @@ def main():
     if a.only:
         specs = [s for s in specs if s["id"] in a.only.split(",")]
     targets, judges = a.targets.split(","), a.judges.split(",")
+    for p in (a.work, a.out):
+        if p:
+            outside_repo(p)
     if a.stage == "setup":
+        snapshot = {}
         for n, src in arms_def:
             d = a.work / n
             shutil.rmtree(d, ignore_errors=True)
             d.mkdir(parents=True)
             if src != "none":
-                shutil.copytree(src, d / ".agents" / "skills" / SKILL)
+                shutil.copytree(src, d / ".agents" / "skills" / SKILL)  # agy and Codex
+                shutil.copytree(src, d / ".claude" / "skills" / SKILL)  # Claude Code
+                snapshot[n] = {str(f.relative_to(src)).replace("\\", "/"): hashlib.sha256(f.read_bytes()).hexdigest()
+                               for f in sorted(Path(src).rglob("*")) if f.is_file()}
+            else:
+                snapshot[n] = None
         (a.work / "judge").mkdir(parents=True, exist_ok=True)
+        (a.work / "arms.json").write_text(json.dumps(snapshot, indent=1), encoding="utf-8")  # sha256 of every file each arm saw
         return
     (a.out / "gen").mkdir(parents=True, exist_ok=True)
     (a.out / "judge").mkdir(parents=True, exist_ok=True)
