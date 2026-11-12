@@ -75,14 +75,14 @@ agy 端評審的可讀性分數隨回覆縮短而提高（1.1.1 對不載入 ski
 
 本儲存庫的根目錄是 marketplace，套件本身在 `plugins/asd-ste100-style/`。[套件 ZIP](dist/asd-ste100-style-plugin.zip) 解壓後的 `asd-ste100-style/` 資料夾有相同結構，下文稱為「套件資料夾」。
 
-從 GitHub 安裝到 Claude Code 時，在目標專案的根目錄執行。專案範圍會寫進該專案的 `.claude/settings.json`，可隨專案共用。這組命令在 1.0.3 的舊佈局實際安裝過，1.3.0 的新佈局尚未實測：
+從 GitHub 安裝到 Claude Code 時，在目標專案的根目錄執行。專案範圍會寫進該專案的 `.claude/settings.json`，可隨專案共用。這組命令在 1.0.3 的舊佈局實際安裝過；1.3.0 要推送到 GitHub 後才能從遠端測，同一份 marketplace 從本機路徑安裝已通過（見下段）：
 
 ```powershell
 claude plugin marketplace add felimet/asd-ste100-style --scope project
 claude plugin install asd-ste100-style@asd-ste100-local --scope project
 ```
 
-使用解壓的 ZIP 時，同樣在目標專案的根目錄執行，並把 `<套件資料夾>` 換成絕對路徑。本機路徑只對這台電腦有效，所以用只寫進個人設定的 `--scope local`；Claude Code 直接從該資料夾讀取套件，安裝後不要刪除它。這組命令尚未實測：
+使用解壓的 ZIP 時，同樣在目標專案的根目錄執行，並把 `<套件資料夾>` 換成絕對路徑。本機路徑只對這台電腦有效，所以用只寫進個人設定的 `--scope local`；Claude Code 直接從該資料夾讀取套件，安裝後不要刪除它。這組命令已在 Claude Code 2.1.319 以 repo 路徑與 ZIP 解壓資料夾各安裝一次，套件為 enabled、含 1 個 skill（[安裝測試紀錄](tests/install-validation-2026-11-12.md)）：
 
 ```powershell
 claude plugin marketplace add <套件資料夾> --scope local
@@ -91,7 +91,7 @@ claude plugin install asd-ste100-style@asd-ste100-local --scope local
 
 `asd-ste100-local` 只是 marketplace 識別名稱，不表示套件必須在本機。
 
-Codex CLI 可登錄 marketplace 並安裝套件；這會更新該機器的 Codex 套件設定。這組命令尚未實測：
+Codex CLI 可登錄 marketplace 並安裝套件；這會更新該機器的 Codex 套件設定。這組命令已在 Codex CLI 0.166.0 以 repo 路徑與 ZIP 解壓資料夾各安裝一次，安裝後模型可見的提示列出此 skill：
 
 ```powershell
 codex plugin marketplace add <套件資料夾>
@@ -107,7 +107,7 @@ agy plugin validate <套件資料夾>/plugins/asd-ste100-style --strict
 agy plugin install <套件資料夾>/plugins/asd-ste100-style
 ```
 
-`agy plugin validate --strict` 已在 agy 1.5.6 對 `plugins/asd-ste100-style` 與 ZIP 解壓後的同一目錄執行並通過（兩則 note：未宣告 logo、`$schema` 的載入方式說明）；`agy plugin install` 尚未實際執行。依官方文件，CLI 外掛安裝在使用者層級的 `~/.gemini/config/plugins/`，`agy plugin install` 沒有專案 scope 選項。官方文件另載明可把外掛資料夾放進工作區的 `.agents/plugins/`，僅在該專案啟用，但此做法尚未測試，需確認。若只允許變更目前專案，改用下方的專案單一 skill 安裝。官方文件只列出 `plugin.json` 與 `.antigravity-plugin/plugin.json` 兩種 manifest 位置，也未記載 marketplace 檔案格式，因此本專案沒有為 Antigravity 另建 manifest 或 marketplace。
+`agy plugin validate --strict` 已在 agy 1.5.6 對 `plugins/asd-ste100-style` 與 ZIP 解壓後的同一目錄執行並通過（兩則 note：未宣告 logo、`$schema` 的載入方式說明）；`agy plugin install` 也已執行，安裝 1 個 skill。依官方文件，CLI 外掛安裝在使用者層級的 `~/.gemini/config/plugins/`，`agy plugin install` 沒有專案 scope 選項。官方文件另載明可把外掛資料夾放進工作區的 `.agents/plugins/`，僅在該專案啟用；這個做法已實測，`/asd-ste100-zh-tw` 會讀取 `.agents/plugins/asd-ste100-style/skills/asd-ste100-zh-tw/SKILL.md`。若只允許變更目前專案，用這個路徑或下方的專案單一 skill 安裝。官方文件只列出 `plugin.json` 與 `.antigravity-plugin/plugin.json` 兩種 manifest 位置，也未記載 marketplace 檔案格式，因此本專案沒有為 Antigravity 另建 manifest 或 marketplace。
 
 本專案的 Codex marketplace 名稱為 `asd-ste100-local`。在支援本機 marketplace 的 Codex 桌面介面，也可從 Plugins 目錄選取該來源並安裝。套件安裝後，預設對話風格仍由下方的 [常駐規則](#設為-ai-agent-的預設風格) 決定。
 
