@@ -12,4 +12,5 @@
 - `heldout3-eval-2026-11-13.md` 是第三組的結果（216 筆觸發、324 筆生成、324 份評審）。A 部分選 `descA`，B 部分依規則採用新的篇幅段落，1.3.0 的 SKILL.md 據此修改；判定可用 `eval/heldout3_decide.py` 從結果檔重跑。
 - `install-validation-2026-11-12.md` 記錄 commit 2881cf4 的 1.3.0（SKILL.md sha256 `0dca1520…`）在 Claude Code、Codex 與 agy 的安裝測試。不含 2026-11-13 對 `description` 與篇幅句的修改；推送後要從 GitHub 重測。
 - `errata-2026-11-13.md` 更正第二組 protocol 的鎖定雜湊所對應的檔案版本。
+- `manifest-validation-2026-11-13.md` 記錄 commit 64ba85d 的 `claude plugin validate` 與 `agy plugin validate --strict` 結果；不含安裝與執行時載入。
 - 套件封裝可用 `scripts/build-dist.ps1 -Check` 重現檢查；CI 於 `.github/workflows/validate.yml`。
