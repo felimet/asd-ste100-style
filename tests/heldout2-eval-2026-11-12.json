@@ -1,6 +1,6 @@
 {
  "date": "2026-11-12",
- "protocol": "tests/eval/heldout2-protocol.md (commits 26f3f00, 020b61c, 24a6baf)",
+ "protocol": "tests/eval/heldout2-protocol.md (commits 36e296d, 1047a56, b4a661c)",
  "prompts": "tests/eval/heldout2-prompts.json",
  "models": {
   "agy": "gemini-3.8-flash-high; all 72 generations on agy 1.5.5 (last at 01:28), agy self-updated to 1.5.6 at 01:38, all 48 agy judge calls on 1.5.6",

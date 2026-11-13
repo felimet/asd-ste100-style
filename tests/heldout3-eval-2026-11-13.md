@@ -1,6 +1,6 @@
 # 第三組保留題與觸發測試（description 三臂、篇幅規則 ship 對 len；agy、Codex、Claude Code）
 
-日期：2026-11-13。原始紀錄見 [heldout3-eval-2026-11-13.json](heldout3-eval-2026-11-13.json)（216 筆觸發、324 筆生成、324 筆評審）；題目與觸發題見 [eval/heldout3-prompts.json](eval/heldout3-prompts.json) 與 [eval/triggers2.json](eval/triggers2.json)；判定規則在跑之前寫定於 [eval/heldout3-protocol.md](eval/heldout3-protocol.md)（本機 commit ad243af，2026-11-13 02:13:20 +0800，題目與規則經兩輪審查後才鎖定；這個 commit 還沒有推送到遠端）。
+日期：2026-11-13。原始紀錄見 [heldout3-eval-2026-11-13.json](heldout3-eval-2026-11-13.json)（216 筆觸發、324 筆生成、324 筆評審）；題目與觸發題見 [eval/heldout3-prompts.json](eval/heldout3-prompts.json) 與 [eval/triggers2.json](eval/triggers2.json)；判定規則在跑之前寫定於 [eval/heldout3-protocol.md](eval/heldout3-protocol.md)（本機 commit 0d67863，2026-11-13 02:13:20 +0800，題目與規則經兩輪審查後才鎖定；這個 commit 還沒有推送到遠端）。
 
 ## 結論
 
@@ -154,7 +154,7 @@ directness 與 tone 的逐評審差都很小，CI 多數包含 0，完整數字�
 - agy 與 Codex 會載入作者的全域指令與使用者層級 skill；Claude 端完全隔離。Codex 在作者機器上截斷 description，agy 列出 80 個 skill。
 - harness 的「讀 SKILL」欄：Claude 兩臂都是 1.00，但這個值由程式碼決定（`loaded = arm != "base" or ...`），不是量測；agy 兩臂都是 0；Codex 是 0.13（`ship`）與 0.17（`len`）。四個生成者都是以呼叫前綴載入 skill，工具紀錄看不到 SKILL.md 的讀取，所以無法由紀錄確認各家看到的是哪一臂的文字。間接證據有兩項：生成紀錄中讀取 skill 檔案的路徑都在各自那一臂的工作目錄內，沒有指向使用者層級的 skill；`len` 與 `ship` 在長度與遵守率上確實不同。
 - 沒有人類讀者測試，沒有測常駐規則模式，沒有重複同一個設定的 B 部分。
-- 同一個模型家族的審查者檢查了 protocol 與程式（見 protocol 的「事前登錄審查」），這部分未經外部驗證。結果數字只經過作者自己的獨立重算（不同程式碼，同一定義）；判定規則與題目雜湊在本機 commit ad243af（2026-11-13 02:13:20 +0800）寫定；這個 commit 還沒有推送，寫定的時間點只有作者自己能證明，推送後才有第三方可查的時間戳。
+- 同一個模型家族的審查者檢查了 protocol 與程式（見 protocol 的「事前登錄審查」），這部分未經外部驗證。結果數字只經過作者自己的獨立重算（不同程式碼，同一定義）；判定規則與題目雜湊在本機 commit 0d67863（2026-11-13 02:13:20 +0800）寫定；這個 commit 還沒有推送，寫定的時間點只有作者自己能證明，推送後才有第三方可查的時間戳。
 
 ## 環境與資料處理紀錄
 
@@ -164,7 +164,7 @@ directness 與 tone 的逐評審差都很小，CI 多數包含 0，完整數字�
 - B 部分生成在 04:30:07 發生系統層級故障：bash 出現 fork 失敗，49 次 Codex 呼叫在 1 秒內以 `0xC000026B`（DLL 初始化失敗）結束，背景工作回報 exit 4（腳本的 log 沒有記錄退出碼）。依 protocol 的失敗處理，這 49 筆紀錄被刪除，在 11:27 重新生成，全部成功。被刪除的 49 筆（25 筆 `len`、24 筆 `ship`）檔名列在結果檔的 `models.removed_gen_records`；故障當下的 log 在 repo 外，沒有保存。agy 與 Claude 的 108 + 108 筆，以及 Codex 先前完成的 59 筆沒有重跑。
 - 本檔數字只來自最後的完整資料：324 筆生成沒有空回覆、rc 全為 0；324 份評審沒有失敗，每則回覆都有兩位交叉評審。
 - 結果檔內工具紀錄的本機路徑，作業系統使用者名稱已換成 `<user>`；只改路徑字串，改完後 `heldout3_decide.py` 的輸出與改之前逐項相同。
-- 偏離 protocol 的地方只有 CLI 版本號。判定程式 `heldout3_decide.py`、題目與判定規則自 ad243af 起沒有修改；之後只新增 `eval/heldout3_run/consolidate.py`（合併逐筆紀錄）、`.gitattributes`（固定鎖定檔的換行）與 `AGENTS.md` 的指令。
+- 偏離 protocol 的地方只有 CLI 版本號。判定程式 `heldout3_decide.py`、題目與判定規則自 0d67863 起沒有修改；之後只新增 `eval/heldout3_run/consolidate.py`（合併逐筆紀錄）、`.gitattributes`（固定鎖定檔的換行）與 `AGENTS.md` 的指令。
 
 ## 重現
 

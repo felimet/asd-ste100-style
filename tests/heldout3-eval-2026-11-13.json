@@ -1,6 +1,6 @@
 {
  "date": "2026-11-13",
- "protocol": "tests/eval/heldout3-protocol.md (commit ad243af)",
+ "protocol": "tests/eval/heldout3-protocol.md (commit 0d67863)",
  "models": {
   "trigger_runs": {
    "date": "2026-11-13 02:14-03:16 +08:00",

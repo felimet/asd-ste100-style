@@ -1,5 +1,5 @@
 """Build the three description arms of the held-out 3 trigger test. Usage: build_trig_arms.py <ev4>
-Each arm is the commit 2881cf4 skill folder with SKILL.md line 4 set to the description in heldout3-protocol.md.
+Each arm is the commit 21831a6 skill folder with SKILL.md line 4 set to the description in heldout3-protocol.md.
 The sha256 values are the ones listed in that protocol; the script stops if a built SKILL.md differs.
 All files are written with LF. The arms used in the 2026-11-13 run kept the Windows working-copy line endings (CRLF)
 in the files other than SKILL.md; the content is the same."""
@@ -11,7 +11,7 @@ import sys
 import tarfile
 from pathlib import Path
 
-COMMIT, FOLDER = "2881cf4", "plugins/asd-ste100-style/skills/asd-ste100-zh-tw"
+COMMIT, FOLDER = "21831a6", "plugins/asd-ste100-style/skills/asd-ste100-zh-tw"
 ARMS = {
     "old": (None, "0dca1520bf83eaf1f4c49daa3190a18e9ceefcd1825b9e3123136759f7c8fcad"),
     "descA": ('description: 使用者要求 STE 風格、清楚精確且易於掃讀的繁體中文回覆，或已將此風格設為對話預設時使用。參考 ASD-STE100 部分原則的非官方改編，調整 AI Agent 的繁體中文對話風格，適用於日常問答、概念解釋、建議、討論與進度回報，也可延伸至文件表達。',

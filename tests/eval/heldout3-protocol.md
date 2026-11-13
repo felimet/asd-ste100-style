@@ -21,7 +21,7 @@
 
 ### 臂
 
-三臂只差 SKILL.md 第 4 行（`description`），其餘檔案與 commit 2881cf4 的 `plugins/asd-ste100-style/skills/asd-ste100-zh-tw/` 相同。
+三臂只差 SKILL.md 第 4 行（`description`），其餘檔案與 commit 21831a6 的 `plugins/asd-ste100-style/skills/asd-ste100-zh-tw/` 相同。
 
 | 臂 | description | SKILL.md sha256 |
 | --- | --- | --- |
@@ -64,7 +64,7 @@
 
 ### 臂
 
-- `ship`：commit 2881cf4 的 `plugins/asd-ste100-style/skills/asd-ste100-zh-tw/`，SKILL.md 第 4 行換成 A 部分選定的 description。
+- `ship`：commit 21831a6 的 `plugins/asd-ste100-style/skills/asd-ste100-zh-tw/`，SKILL.md 第 4 行換成 A 部分選定的 description。
 - `len`：`ship` 再把 SKILL.md「在對話中套用」第二段的最後一句換掉，其餘完全相同。
 
 原句：

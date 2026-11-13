@@ -1,6 +1,6 @@
 # 第二組保留題（base、lean、v120；agy、Codex、Claude Code）
 
-日期：2026-11-12。原始回覆與評審紀錄見 [heldout2-eval-2026-11-12.json](heldout2-eval-2026-11-12.json)；題目見 [eval/heldout2-prompts.json](eval/heldout2-prompts.json)；判定規則在看結果前寫定於 [eval/heldout2-protocol.md](eval/heldout2-protocol.md)（commit 26f3f00，修訂 020b61c、24a6baf）。
+日期：2026-11-12。原始回覆與評審紀錄見 [heldout2-eval-2026-11-12.json](heldout2-eval-2026-11-12.json)；題目見 [eval/heldout2-prompts.json](eval/heldout2-prompts.json)；判定規則在看結果前寫定於 [eval/heldout2-protocol.md](eval/heldout2-protocol.md)（commit 36e296d，修訂 1047a56、b4a661c）。
 
 ## 結論
 
@@ -102,7 +102,7 @@ BCa、t 檢定與 Wilcoxon 來自獨立重算的腳本，沒有納入 repo；其
 ## 環境與資料處理紀錄
 
 - agy 在 01:38 自動更新為 1.5.6。72 筆 agy 生成都在 01:28 前完成，使用 1.5.5；48 份 agy 評審都在更新後執行，使用 1.5.6。Claude Code 與 Codex 的執行檔在評測期間沒有變動。
-- protocol 已記錄的執行層調整（commit 020b61c、24a6baf）：agy 改模型；Codex 降低並行數並延長逾時；agy 評審加上不使用工具的提示句並延長逾時。
+- protocol 已記錄的執行層調整（commit 1047a56、b4a661c）：agy 改模型；Codex 降低並行數並延長逾時；agy 評審加上不使用工具的提示句並延長逾時。
 - protocol 沒有記錄的一項：有 2 份 agy 評審把同一段 JSON 輸出兩次，導致解析失敗。`extract_json` 改為只取第一個完整的 JSON 物件，這 2 份重跑後成功。修改時沒有人讀過評分。
 - 失敗紀錄（agy 額度、Codex 逾時與額度上限、agy 評審的空輸出）都已刪除並重跑。本檔數字只來自最後的完整資料：216 筆生成沒有空回覆，144 份評審沒有失敗，每則回覆都有兩位交叉評審。
 

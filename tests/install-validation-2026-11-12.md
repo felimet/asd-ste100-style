@@ -1,6 +1,6 @@
 # 1.3.0 安裝測試（2026-11-12）
 
-對象是 commit 2881cf4 的 repo（marketplace 根目錄）與同一 commit 重建的 `dist/asd-ste100-style-plugin.zip` 解壓後的 `asd-ste100-style/` 資料夾。安裝都在隔離的設定目錄進行（`CLAUDE_CONFIG_DIR`、`CODEX_HOME`、agy 用 `USERPROFILE`），沒有寫入作者實際使用的設定。
+對象是 commit 21831a6 的 repo（marketplace 根目錄）與同一 commit 重建的 `dist/asd-ste100-style-plugin.zip` 解壓後的 `asd-ste100-style/` 資料夾。安裝都在隔離的設定目錄進行（`CLAUDE_CONFIG_DIR`、`CODEX_HOME`、agy 用 `USERPROFILE`），沒有寫入作者實際使用的設定。
 
 ## 結果
 

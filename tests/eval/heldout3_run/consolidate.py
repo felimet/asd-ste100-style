@@ -15,7 +15,7 @@ def load(d):
     return [json.loads(f.read_text(encoding="utf-8")) for f in sorted(d.glob("*.json"))]
 
 
-rec = {"date": "2026-11-13", "protocol": "tests/eval/heldout3-protocol.md (commit ad243af)", "models": models,
+rec = {"date": "2026-11-13", "protocol": "tests/eval/heldout3-protocol.md (commit 0d67863)", "models": models,
        "trig": load(ev / "tout" / "trig"), "arms_trig": json.loads((ev / "twork" / "arms.json").read_text(encoding="utf-8"))}
 if (ev / "about").exists():
     gens = load(ev / "about" / "gen")

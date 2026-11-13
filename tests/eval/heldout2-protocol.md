@@ -10,7 +10,7 @@
 ## 臂
 
 - `base`：不載入 skill。
-- `lean`：1.1.1，commit 5581050 的 `skills/asd-ste100-zh-tw/`。
+- `lean`：1.1.1，commit 47bdb39 的 `skills/asd-ste100-zh-tw/`。
 - `v120`：1.2.0 候選，`plugins/asd-ste100-style/skills/asd-ste100-zh-tw/`。各臂實際檔案的 sha256 由 harness 寫在工作目錄的 `arms.json`，結果紀錄會附上。
 
 ## 生成者與評審
