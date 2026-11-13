@@ -9,9 +9,10 @@
 - 驗證（宣告完成前必須通過）：`pwsh -NoProfile -File scripts/build-dist.ps1 -Check`。需要 PowerShell 7（`pwsh`），Windows PowerShell 5.1 會失敗。
 - 重建 ZIP：`pwsh -NoProfile -File scripts/build-dist.ps1`
 - 套件格式檢查：`claude plugin validate plugins/asd-ste100-style --strict`、`claude plugin validate . --strict`（marketplace）、`agy plugin validate plugins/asd-ste100-style --strict`
-- 評測統計自測：`python -I -B tests/eval/run_cli_eval.py selftest` 與 `python -I -B tests/eval/heldout2_decide.py selftest`
+- 評測統計自測：`python -I -B tests/eval/run_cli_eval.py selftest`、`python -I -B tests/eval/heldout2_decide.py selftest` 與 `python -I -B tests/eval/heldout3_decide.py selftest`
 - 第二組保留題的判定：`python -I -B -X utf8 tests/eval/heldout2_decide.py tests/heldout2-eval-2026-11-12.json --sensitivity`
-- 跨 CLI 評測：`python -I -X utf8 tests/eval/run_cli_eval.py setup|gen|judge|report ...`，參數見該檔開頭與 `tests/eval/heldout2-protocol.md`。會呼叫 agy、Codex、Claude 並消耗額度；`--work` 必須在 repo 外（程式會拒絕 repo 內的路徑）。Windows 上先把 `CODEX_BIN` 設為實際使用的 codex 執行檔。
+- 第三組保留題與觸發測試的判定：`python -I -B -X utf8 tests/eval/heldout3_decide.py tests/heldout3-eval-2026-11-13.json`；協定引用的門檻校準數字：`python -I -B tests/eval/heldout3_decide.py simulate`
+- 跨 CLI 評測：`python -I -X utf8 tests/eval/run_cli_eval.py setup|gen|judge|report|trigger|trigreport ...`，參數見該檔開頭與各組的 protocol。會呼叫 agy、Codex、Claude 並消耗額度；`--work` 必須在 repo 外（程式會拒絕 repo 內的路徑）。Windows 上先把 `CODEX_BIN` 設為實際使用的 codex 執行檔。第三組的整套執行腳本在 `tests/eval/heldout3_run/`（Git Bash：先 `python build_trig_arms.py <E4>` 建三個 description 臂，再 `E4=<repo 外目錄> CODEX_BIN=<codex.exe> bash run_trig.sh`，然後 `build_ab_arms.py`、`run_ab.sh`、`consolidate.py`）。
 
 ## 慣例
 

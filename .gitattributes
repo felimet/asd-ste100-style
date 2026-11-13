@@ -1,1 +1,4 @@
 *.sh text eol=lf
+# Locked evaluation items: keep LF so the sha256 in heldout3-protocol.md matches a fresh checkout
+tests/eval/heldout3-*.json text eol=lf
+tests/eval/triggers2.json text eol=lf
