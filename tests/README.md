@@ -10,8 +10,9 @@
 - `heldout2-eval-2026-11-12.md` 是第二組保留題的結果（3 個生成者、3 臂、每臂每題 1 次取樣）。1.2.0 候選版的 SKILL.md 在 agy 端觸發事前登錄的退步規則，所以 1.3.0 沿用 1.1.1 的 SKILL.md 文字；判定的計算可用 `eval/heldout2_decide.py` 從結果檔重跑。
 - `eval/heldout3-protocol.md` 是第三組保留題與觸發測試的判定規則，在跑之前單獨提交（commit 0d67863）。A 部分比較三種 `description` 的自動觸發，B 部分比較 1.2.0 候選版的篇幅句換進 1.1.1 之後的篇幅遵守率與必要內容。
 - `heldout3-eval-2026-11-13.md` 是第三組的結果（216 筆觸發、324 筆生成、324 份評審）。A 部分選 `descA`，B 部分依規則採用新的篇幅段落，1.3.0 的 SKILL.md 據此修改；判定可用 `eval/heldout3_decide.py` 從結果檔重跑。
-- `install-validation-2026-11-12.md` 記錄 commit 21831a6 的 1.3.0（SKILL.md sha256 `0dca1520…`）在 Claude Code、Codex 與 agy 的安裝測試。不含 2026-11-13 對 `description` 與篇幅句的修改；推送後要從 GitHub 重測。
+- `install-validation-2026-11-12.md` 記錄 commit 21831a6 的 1.3.0（SKILL.md sha256 `0dca1520…`）在 Claude Code、Codex 與 agy 的安裝測試。不含 2026-11-13 對 `description` 與篇幅句的修改；Claude Code 從 GitHub 的重測見 `install-validation-2026-11-14.md`，Codex 與 agy 沒有重測。
 - `errata-2026-11-13.md` 更正第二組 protocol 的鎖定雜湊所對應的檔案版本。
 - `manifest-validation-2026-11-13.md` 記錄 commit efe90dd 的 `claude plugin validate` 與 `agy plugin validate --strict` 結果；不含安裝與執行時載入。
 - `errata-2026-11-14.md` 記錄四個結果檔的本機路徑去識別，以及推送前 commit hash 的更新與新舊對照表。
+- `install-validation-2026-11-14.md` 記錄從 GitHub 安裝 1.3.0（commit 456b281）的測試，涵蓋 Claude Code 的 `--scope project` 與 `--scope local`。沒有實際呼叫 skill。
 - 套件封裝可用 `scripts/build-dist.ps1 -Check` 重現檢查；CI 於 `.github/workflows/validate.yml`。

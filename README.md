@@ -99,20 +99,60 @@ skill 是 Agent 會讀取的文字指令資料夾。它隨套件（plugin）`asd
 - Antigravity 的 `agy plugin install` 沒有專案範圍選項。它安裝在使用者層級的 `~/.gemini/config/plugins/`。
 - 安裝 skill 不等於每則回覆都採用此風格。要預設採用，見[設為預設風格](#設為預設風格)。
 
-### 方法一：套件
+### 方法一：請 Agent 代為安裝
+
+1. 展開下方的安裝 Prompt，複製全文。
+2. 確認 Prompt 內的來源網址，是你要安裝的儲存庫。
+3. 把全文貼給要協助安裝的 Agent。
+4. 回答 Agent 提出的範圍與形式問題。Agent 應先詢問，取得你的選擇後才寫入設定。
+5. 檢查 Agent 的完成報告。Prompt 要求它列出變更位置、作用範圍、啟用方式，以及實際完成與尚未完成的驗證。
+
+<details>
+<summary>展開安裝 Prompt</summary>
+
+```text
+請協助我安裝 ASD-STE100 繁體中文風格套件（asd-ste100-style），其中的 skill 名稱是 asd-ste100-zh-tw。
+用途：調整 AI Agent 在日常問答、解釋、建議與進度回報中的表達風格，也可延伸至文件表達。
+來源：https://github.com/felimet/asd-ste100-style
+
+先閱讀來源的 README、套件描述檔與 SKILL.md，確認支援的安裝方式。
+開始修改檔案或設定前，主動詢問我：
+1. 要用在哪些 AI Agent？例如 Claude Code、Codex、Google Antigravity（agy CLI 或 IDE）、Gemini CLI，或其他工具。
+2. 使用範圍是目前專案，還是跨專案的全域範圍？
+3. 希望以什麼形式存在？請提供下列選項並說明差異：
+   A. 僅安裝套件或 skill，按需使用。
+   B. 加入 rules 或指令檔，作為所選範圍的常駐預設風格；例如全域常駐或專案常駐。
+   C. 納入工具的個人化設定或自訂指令。
+   D. 其他方式，先提出方案再由我選擇。
+如果我已明確指定某項選擇，就沿用，不要重複詢問。其餘選項尚未確定時，先等待我的回答，不自行假定全域安裝或修改個人化設定。
+
+收到選擇後：
+- Claude Code 與 Codex 優先使用本專案的套件與 marketplace；Antigravity 的專案範圍優先使用 `.agents/skills/` 單一 skill。安裝方式必須符合我選定的作用範圍。若工具無法在該範圍安裝套件，先說明限制，讓我選擇該範圍的單一 skill 或其他方案，不自行改為全域安裝。
+- 列出實際安裝位置與規則檔位置，保留既有內容，僅合併相關設定；遇到衝突時指出差異。
+- 若要設為預設風格，將精簡規則加入工具支援的 rules、CLAUDE.md、AGENTS.md、GEMINI.md 或個人化指令。以套件安裝時，用 skill 名稱引用完整規則，因為套件的快取路徑會隨版本改變；只有單一 skill 放在固定位置時，才寫實際的 SKILL.md 路徑。
+- 若目標工具不能讀取本機檔案，改提供可直接貼上的自足規則；無法代為操作設定介面時，提供文字與步驟，不宣稱已套用。
+- 三項以上獨立的進度狀態或操作步驟用條列；有先後順序的步驟用編號，並列狀態、條件與檢查項目用項目符號，同時保留數值、條件、否定、時序、引用及不確定性。
+- 完成後列出變更位置、作用範圍、啟用方式，以及實際完成與尚未完成的驗證。
+
+請區分「全域可用」與「預設風格常駐」：只安裝套件或 skill，不代表每次回覆都會自動套用。
+```
+
+</details>
+
+### 方法二：套件
 
 套件含 skill 與套件描述檔（manifest）。本儲存庫的根目錄是 marketplace（列出可安裝套件的來源）。套件本身在 `plugins/asd-ste100-style/`。
 
 [套件 ZIP](dist/asd-ste100-style-plugin.zip) 解壓後有 `asd-ste100-style/` 資料夾。下文稱它為「套件資料夾」。它含 marketplace 檔案與 `plugins/asd-ste100-style/`，不含 `tests/` 與維護者檔案。
 
-**Claude Code，從 GitHub**：GitHub 來源與 `--scope project` 沒有實測。在目標專案的根目錄，依序執行下列兩條命令。
+**Claude Code，從 GitHub**：`--scope project` 與 `--scope local` 都已用 Claude Code 2.1.323 實測安裝，結果是 1.3.0（commit `456b281`）。測試使用獨立的 `CLAUDE_CONFIG_DIR` 與空專案，沒有實際呼叫 skill。見[安裝測試紀錄](tests/install-validation-2026-11-14.md)。在目標專案的根目錄，依序執行下列兩條命令。
 
 ```powershell
 claude plugin marketplace add felimet/asd-ste100-style --scope project
 claude plugin install asd-ste100-style@asd-ste100-local --scope project
 ```
 
-`--scope project` 寫進專案的 `.claude/settings.json`。這個檔案可提交，隨專案共用。協作者仍須各自執行 install。
+`--scope project` 寫進專案的 `.claude/settings.json`。這個檔案可提交，隨專案共用。協作者仍須各自執行 install（依官方文件，沒有實測）。`--scope` 只決定啟用設定記在哪個專案檔。marketplace 的 clone 與套件快取寫在使用者層級的設定目錄。
 
 **Claude Code，從套件資料夾**：執行前完成下列三項。
 
@@ -120,7 +160,7 @@ claude plugin install asd-ste100-style@asd-ste100-local --scope project
 - 把 `<套件資料夾>` 換成絕對路徑。
 - 安裝後不要刪除套件資料夾，因為 Claude Code 直接從該資料夾讀取套件。
 
-本機路徑只對這台電腦有效，所以使用 `--scope local`。它寫進 `.claude/settings.local.json`，只對你、這個專案有效，不隨專案共用。依序執行：
+本機路徑只對這台電腦有效，所以使用 `--scope local`。它寫進 `.claude/settings.local.json`，只對你、這個專案有效。安裝不會寫入 `.gitignore`，提交前確認它沒有被加入版本控制。依序執行：
 
 ```powershell
 claude plugin marketplace add <套件資料夾> --scope local
@@ -147,7 +187,7 @@ agy plugin install <套件資料夾>/plugins/asd-ste100-style
 
 Antigravity 官方文件只列出 `plugin.json` 與 `.antigravity-plugin/plugin.json` 兩種描述檔位置，也沒有記載 marketplace 檔案格式。因此本專案沒有為 Antigravity 另建描述檔或 marketplace。
 
-### 方法二：單一 skill
+### 方法三：單一 skill
 
 單一 skill 是複製一個資料夾。範圍由放置位置決定。
 
@@ -188,46 +228,6 @@ foreach ($skillTarget in $skillTargets) {
 ```
 
 此 skill 是文字指令，不需要額外的 API 金鑰，也不需要另外安裝執行期的程式庫。各工具的 skill 格式見 [Claude Code 文件](https://code.claude.com/docs/en/skills)、[Codex 文件](https://learn.chatgpt.com/docs/build-skills)與 [Antigravity Skills 文件](https://antigravity.google/docs/skills)。
-
-### 方法三：請 Agent 代為安裝
-
-1. 展開下方的安裝 Prompt，複製全文。
-2. 確認 Prompt 內的來源網址，是你要安裝的儲存庫。
-3. 把全文貼給要協助安裝的 Agent。
-4. 回答 Agent 提出的範圍與形式問題。Agent 應先詢問，取得你的選擇後才寫入設定。
-5. 檢查 Agent 的完成報告。Prompt 要求它列出變更位置、作用範圍、啟用方式，以及實際完成與尚未完成的驗證。
-
-<details>
-<summary>展開安裝 Prompt</summary>
-
-```text
-請協助我安裝 ASD-STE100 繁體中文風格套件（asd-ste100-style），其中的 skill 名稱是 asd-ste100-zh-tw。
-用途：調整 AI Agent 在日常問答、解釋、建議與進度回報中的表達風格，也可延伸至文件表達。
-來源：https://github.com/felimet/asd-ste100-style
-
-先閱讀來源的 README、套件描述檔與 SKILL.md，確認支援的安裝方式。
-開始修改檔案或設定前，主動詢問我：
-1. 要用在哪些 AI Agent？例如 Claude Code、Codex、Google Antigravity（agy CLI 或 IDE）、Gemini CLI，或其他工具。
-2. 使用範圍是目前專案，還是跨專案的全域範圍？
-3. 希望以什麼形式存在？請提供下列選項並說明差異：
-   A. 僅安裝套件或 skill，按需使用。
-   B. 加入 rules 或指令檔，作為所選範圍的常駐預設風格；例如全域常駐或專案常駐。
-   C. 納入工具的個人化設定或自訂指令。
-   D. 其他方式，先提出方案再由我選擇。
-如果我已明確指定某項選擇，就沿用，不要重複詢問。其餘選項尚未確定時，先等待我的回答，不自行假定全域安裝或修改個人化設定。
-
-收到選擇後：
-- Claude Code 與 Codex 優先使用本專案的套件與 marketplace；Antigravity 的專案範圍優先使用 `.agents/skills/` 單一 skill。安裝方式必須符合我選定的作用範圍。若工具無法在該範圍安裝套件，先說明限制，讓我選擇該範圍的單一 skill 或其他方案，不自行改為全域安裝。
-- 列出實際安裝位置與規則檔位置，保留既有內容，僅合併相關設定；遇到衝突時指出差異。
-- 若要設為預設風格，將精簡規則加入工具支援的 rules、CLAUDE.md、AGENTS.md、GEMINI.md 或個人化指令。以套件安裝時，用 skill 名稱引用完整規則，因為套件的快取路徑會隨版本改變；只有單一 skill 放在固定位置時，才寫實際的 SKILL.md 路徑。
-- 若目標工具不能讀取本機檔案，改提供可直接貼上的自足規則；無法代為操作設定介面時，提供文字與步驟，不宣稱已套用。
-- 三項以上獨立的進度狀態或操作步驟用條列；有先後順序的步驟用編號，並列狀態、條件與檢查項目用項目符號，同時保留數值、條件、否定、時序、引用及不確定性。
-- 完成後列出變更位置、作用範圍、啟用方式，以及實際完成與尚未完成的驗證。
-
-請區分「全域可用」與「預設風格常駐」：只安裝套件或 skill，不代表每次回覆都會自動套用。
-```
-
-</details>
 
 ## 呼叫 skill
 
